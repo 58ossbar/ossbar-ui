@@ -4,16 +4,17 @@
  * 通过 this.Global 调用
  */
 
- // 后台管理系统服务器地址
-export const baseUrl = 'https://frp.creatorblue.com/console'
- //export const baseUrl = 'http://localhost:8090'
-//export const baseUrl = 'http://139.196.87.48:8001'
+export const tokenKeyName = 'token'
+// 域名
+export const domain = process.env.domain
+// 后台管理系统服务器地址
+export const baseUrl = process.env.baseUrl
 
  // 系统数据备份还原服务器地址
-export const backupBaseUrl = 'http://139.196.87.48:8002'
-// export const backupBaseUrl = 'http://localhost:8002'
+export const backupBaseUrl = 'http://ip:8002'
 
 export default {
-    baseUrl,
-    backupBaseUrl
+  domain,
+  baseUrl,
+  backupBaseUrl
 }
