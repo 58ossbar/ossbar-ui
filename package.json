@@ -6,8 +6,9 @@
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "start": "npm run dev",
-    "build": "node build/build.js"
+    "test": "webpack-dev-server --inline --progress --config build/webpack.test.conf.js",
+    "build:test": "cross-env NODE_ENV=test env_config=test node build/build.js",
+    "build:prod": "cross-env NODE_ENV=production env_config=prod node build/build.js"
   },
   "dependencies": {
     "axios": "^0.18.0",

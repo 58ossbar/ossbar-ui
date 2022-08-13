@@ -3,6 +3,8 @@ import config from './config';
 import Cookies from "js-cookie";
 import router from '@/router'
 
+import { tokenKeyName } from '@/utils/global'
+
 // 使用vuex做全局loading时使用
 // import store from '@/store'
 
@@ -18,7 +20,7 @@ export default function $axios(options) {
     // request 拦截器
     instance.interceptors.request.use(
       config => {
-        let token = Cookies.get('token')
+        let token = Cookies.get(tokenKeyName)
         // 1. 请求开始的时候可以结合 vuex 开启全屏 loading 动画
         // console.log(store.state.loading)
         // console.log('准备发送请求...')
