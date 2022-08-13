@@ -5,7 +5,7 @@
         <img src="../assets/my/logo.png" height="70px" alt="logo" />
       </div>
       <div style="height:75px;line-height: 75px;color: black;font-size: 20px;margin-left: 1%">
-        创蓝教育实训云平台
+        教育实训云平台
       </div>
     </div>
     <div class="center">
@@ -88,7 +88,7 @@
       </div>
     </div>
     <div class="footer">
-      <p>Copyright © 2019-2025 <a>湖南创蓝信息科技有限公司</a> 版权所有</p>
+      <p>Copyright © 2019-2025 <a>**********</a> 版权所有</p>
       <p>联系电话：<a>0731-89913439</a></p>
     </div>
   </div>
