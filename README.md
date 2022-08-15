@@ -1,26 +1,27 @@
-#ossbar-ui
-#前端技术
 
-基础框架：基于Element-UI实现
+# ossbar-ui
+# 前端技术
 
-JavaScript框架：Vue
+1.基础框架：基于Element-UI实现
 
-Webpack
+2.JavaScript框架：Vue
 
-node 12+
+2.Webpack
 
-yarn
+4.node 12+
 
-eslint
+5.yarn
 
-@vue/cli 3.2.1
+6.eslint
 
-#内置前端功能UI
+7.@vue/cli 3.2.1
 
-#安装和部署
+# 内置前端功能UI
+
+# 安装和部署
 
 npm install
 
-#项目启动
+# 项目启动
 
 npm run dev
