@@ -8,7 +8,6 @@ import Generator from '@/views/Generator/Generator'
 import api from '@/http/api'
 import store from '@/store'
 import { getIFramePath, getIFrameUrl } from '@/utils/iframe'
-
 Vue.use(Router)
 
 const router = new Router({
@@ -72,7 +71,6 @@ function addDynamicMenuAndRoutes(userName, to, from) {
   // 处理IFrame嵌套页面
   handleIFrameUrl(to.path)
   if (store.state.app.menuRouteLoaded) {
-    console.log('动态菜单和路由已经存在.')
     return
   }
   api.menu.findNavTree({ 'userName': userName })
@@ -146,7 +144,7 @@ function addDynamicRoutes(menuList = [], routes = []) {
         name: menuList[i].name,
         meta: {
           icon: menuList[i].icon,
-          index: menuList[i].id
+          index: menuList[i].menuId
         }
       }
       const path = getIFramePath(menuList[i].url)
@@ -170,7 +168,7 @@ function addDynamicRoutes(menuList = [], routes = []) {
           url = url.substring(0, url.length - 1)
           route['component'] = resolve => require([`@/views/${url}`], resolve)
         } catch (e) {
-          console.log(e)
+          console.log('出现错误', e)
         }
       }
       routes.push(route)
@@ -178,10 +176,6 @@ function addDynamicRoutes(menuList = [], routes = []) {
   }
   if (temp.length >= 1) {
     addDynamicRoutes(temp, routes)
-  } else {
-    console.log('动态路由加载...')
-    console.log(routes)
-    console.log('动态路由加载完成.')
   }
   return routes
 }
