@@ -1,12 +1,12 @@
-import axios from 'axios';
-import config from './config';
-import Cookies from "js-cookie";
+import axios from 'axios'
+import config from './config'
+import Cookies from 'js-cookie'
 import router from '@/router'
 
 import { tokenKeyName } from '@/utils/global'
 
 // 使用vuex做全局loading时使用
-// import store from '@/store'
+import store from '@/store'
 
 export default function $axios(options) {
   return new Promise((resolve, reject) => {
@@ -20,13 +20,13 @@ export default function $axios(options) {
     // request 拦截器
     instance.interceptors.request.use(
       config => {
-        let token = Cookies.get(tokenKeyName)
+        const token = Cookies.get(tokenKeyName)
         // 1. 请求开始的时候可以结合 vuex 开启全屏 loading 动画
         // console.log(store.state.loading)
         // console.log('准备发送请求...')
         // 2. 带上token
         if (token) {
-          config.headers.authorization = "Bearer" + token
+          config.headers.authorization = 'Bearer' + token
         } else {
           // 重定向到登录页面
           router.push('/login')
@@ -40,7 +40,7 @@ export default function $axios(options) {
           // ) {
 
           // } else {
-            // config.data = qs.stringify(config.data)
+          // config.data = qs.stringify(config.data)
           // }
         }
 
@@ -59,8 +59,8 @@ export default function $axios(options) {
         const errorInfo = error.response
         console.log(errorInfo)
         if (errorInfo) {
-          error = errorInfo.data  // 页面那边catch的时候就能拿到详细的错误信息,看最下边的Promise.reject
-          const errorStatus = errorInfo.status; // 404 403 500 ...
+          error = errorInfo.data // 页面那边catch的时候就能拿到详细的错误信息,看最下边的Promise.reject
+          const errorStatus = errorInfo.status // 404 403 500 ...
           router.push({
             path: `/error/${errorStatus}`
           })
@@ -72,9 +72,9 @@ export default function $axios(options) {
     // response 拦截器
     instance.interceptors.response.use(
       response => {
-        let data;
+        let data
         // IE9时response.data是undefined，因此需要使用response.request.responseText(Stringify后的字符串)
-        if (response.data == undefined) {
+        if (response.data === undefined) {
           data = JSON.parse(response.request.responseText)
         } else {
           data = response.data
@@ -84,11 +84,13 @@ export default function $axios(options) {
         switch (data.rc) {
           case 1:
             console.log(data.desc)
-            break;
+            break
           case 0:
             store.commit('changeState')
+            break
             // console.log('登录成功')
           default:
+            break
         }
         // 若不是正确的返回code，且已经登录，就抛出错误
         // const err = new Error(data.desc)
