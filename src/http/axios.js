@@ -2,11 +2,12 @@ import axios from 'axios'
 import config from './config'
 import Cookies from 'js-cookie'
 import router from '@/router'
+import { Message } from 'element-ui'
 
 import { tokenKeyName } from '@/utils/global'
 
 // 使用vuex做全局loading时使用
-import store from '@/store'
+// import store from '@/store'
 
 export default function $axios(options) {
   return new Promise((resolve, reject) => {
@@ -68,7 +69,7 @@ export default function $axios(options) {
         return Promise.reject(error) // 在调用的那边可以拿到(catch)你想返回的错误信息
       }
     )
-
+    // const that = this
     // response 拦截器
     instance.interceptors.response.use(
       response => {
@@ -87,7 +88,7 @@ export default function $axios(options) {
             break
           case 2071:
           case 2073:
-            this.$message.waring('令牌已失效，请重新登录')
+            Message({ message: '令牌已失效，请重新登录', type: 'error', duration: 2 * 1000 })
             // 删除
             sessionStorage.removeItem('user')
             // 重新登录
