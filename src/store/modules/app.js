@@ -1,8 +1,8 @@
 export default {
   state: {
-    appName: '实训管理端', // 应用名称
-    themeColor: '#1A1A1A', // 主题颜色
-    oldThemeColor: '#1A1A1A', // 上一次主题颜色
+    appName: '实训云平台', // 应用名称
+    themeColor: '#409EFF', // 主题颜色
+    oldThemeColor: '#409EFF', // 上一次主题颜色
     collapse: false, // 导航栏收缩状态
     menuRouteLoaded: false // 菜单和路由是否已经加载
   },

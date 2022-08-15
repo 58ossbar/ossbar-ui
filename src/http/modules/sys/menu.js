@@ -30,7 +30,7 @@ export const batchDelete = (data) => {
 }*/
 export const findNavTree = (params) => {
   return axios({
-    url: '/menu/findNavTree',
+    url: '/api/menu/findNavTree',
     method: 'get',
     params
   })

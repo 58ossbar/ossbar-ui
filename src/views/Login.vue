@@ -165,6 +165,11 @@ export default {
       checked: true
     }
   },
+  computed: {
+    ...mapState({
+      themeColor: state => state.app.themeColor
+    })
+  },
   mounted() {
     this.$nextTick(() => {
       this.$refs.account.focus()
@@ -229,10 +234,7 @@ export default {
             }
           }).catch((res) => {
             this.loading = false
-            this.$message({
-              message: res.message,
-              type: 'error'
-            })
+            this.$message({ message: res.message, type: 'error' })
           })
         }
       })
@@ -247,11 +249,6 @@ export default {
     onThemeChange: function(themeColor) {
       this.$store.commit('setThemeColor', themeColor)
     }
-  },
-  computed: {
-    ...mapState({
-      themeColor: state => state.app.themeColor
-    })
   }
 }
 </script>

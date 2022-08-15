@@ -26,7 +26,7 @@ export default function $axios(options) {
         // console.log('准备发送请求...')
         // 2. 带上token
         if (token) {
-          config.headers.authorization = 'Bearer' + token
+          config.headers.authorization = 'Bearer ' + token
         } else {
           // 重定向到登录页面
           router.push('/login')
@@ -79,16 +79,20 @@ export default function $axios(options) {
         } else {
           data = response.data
         }
-
         // 根据返回的code值来做不同的处理
-        switch (data.rc) {
-          case 1:
-            console.log(data.desc)
-            break
+        switch (data.code) {
           case 0:
-            store.commit('changeState')
+          case 200:
+            // store.commit('changeState')
             break
-            // console.log('登录成功')
+          case 2071:
+          case 2073:
+            this.$message.waring('令牌已失效，请重新登录')
+            // 删除
+            sessionStorage.removeItem('user')
+            // 重新登录
+            router.push('/login')
+            break
           default:
             break
         }
@@ -97,7 +101,6 @@ export default function $axios(options) {
         // err.data = data
         // err.response = response
         // throw err
-
         return data
       },
       err => {
