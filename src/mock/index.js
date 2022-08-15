@@ -12,8 +12,8 @@ import * as log from './modules/log'
 // 2. 开启/关闭[业务模块]拦截, 通过调用fnCreate方法[isOpen参数]设置.
 // 3. 开启/关闭[业务模块中某个请求]拦截, 通过函数返回对象中的[isOpen属性]设置.
 
-const openMock = true
-// let openMock = false
+// const openMock = true
+const openMock = false
 
 fnCreate(login, openMock)
 fnCreate(user, openMock)

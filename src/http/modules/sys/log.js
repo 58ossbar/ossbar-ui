@@ -1,4 +1,4 @@
-import axios from '../axios'
+import axios from '@/http/axios'
 
 /*
  * 日志管理模块

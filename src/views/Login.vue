@@ -122,7 +122,7 @@
 <script>
 
 import { mapState } from 'vuex'
-import { baseUrl } from '../utils/global'
+import { baseUrl, tokenKeyName } from '@/utils/global'
 import Cookies from 'js-cookie'
 import ThemePicker from '@/components/ThemePicker'
 import LangSelector from '@/components/LangSelector'
@@ -142,8 +142,8 @@ export default {
       loading: false,
       activeName: 'user',
       loginForm: {
-        account: '',
-        password: '',
+        account: process.env.NODE_ENV === 'production' ? '' : 'admin',
+        password: process.env.NODE_ENV === 'production' ? '' : 'admin',
         captcha: '',
         captchaUser: '',
         src: ''
@@ -205,34 +205,36 @@ export default {
       })
     },
     login() {
-      this.loading = true
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
+          this.loading = true
           const userInfo = { username: this.loginForm.account, password: this.loginForm.password, captcha: this.loginForm.captcha }
           this.$api.login.login(userInfo).then((res) => {
-            if (res.msg != null) {
-              this.$message({
-                message: res.msg,
-                type: 'error'
-              })
+            this.loading = false
+            if (res.code !== 0) {
+              this.$message({ message: res.msg, type: 'error' })
               this.refreshCaptcha()
             } else {
-              Cookies.set('token', res.token) // 放置token到Cookie
-              sessionStorage.setItem('user', userInfo.username)// 保存用户到本地会话
+              // 放置token到Cookie
+              Cookies.set(tokenKeyName, res.data.token)
+              // 保存用户到本地会话
+              sessionStorage.setItem('user', userInfo.username)
               sessionStorage.setItem('userRealname', res.data.userRealname)
               sessionStorage.setItem('userimg', res.data.userimg)
               sessionStorage.setItem('userId', res.data.userId)
-              this.$store.commit('menuRouteLoaded', false) // 要求重新加载导航菜单
-              this.$router.push('/') // 登录成功，跳转到主页
+              // 要求重新加载导航菜单
+              this.$store.commit('menuRouteLoaded', false)
+              // 登录成功，跳转到主页
+              this.$router.push('/')
             }
           }).catch((res) => {
+            this.loading = false
             this.$message({
               message: res.message,
               type: 'error'
             })
           })
         }
-        this.loading = false
       })
     },
     refreshCaptcha: function() {
