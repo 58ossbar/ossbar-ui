@@ -11,4 +11,26 @@
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
+  <script>
+    const screenWidth = window.screen.width;
+    //[1920,]
+    let fontStyleTag = document.getElementById("fontStyle")
+    if (!fontStyleTag) {
+      fontStyleTag = document.createElement('style')
+      fontStyleTag.setAttribute('id', "fontStyle")
+      document.body.appendChild(fontStyleTag)
+    }
+    if (screenWidth >= 1920){
+      fontStyleTag.innerText = "html {font-size: 14px;}";
+    // [1680, 1920)
+    } else if(screenWidth >= 1680){
+      fontStyleTag.innerText = "html {font-size: 13px;}";
+    // [1366, 1680)
+    } else if(screenWidth >= 1366){
+      fontStyleTag.innerText = "html {font-size: 12px;}";
+    // [, 1366)
+    } else {
+      fontStyleTag.innerText = "html {font-size: 11px;}";
+    }
+  </script>
 </html>
