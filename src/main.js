@@ -9,7 +9,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'font-awesome/css/font-awesome.min.css'
 import '@/assets/iconfont/iconfont.css'
-import '../static/xixi/directives.js';
+import '../static/xixi/directives.js'
 
 Vue.use(ElementUI)
 Vue.use(api)
@@ -22,4 +22,4 @@ new Vue({
   router,
   store,
   render: h => h(App)
-});
+})

@@ -6,10 +6,10 @@ export default {
     mainTabsActiveName: ''
   },
   mutations: {
-    updateMainTabs (state, tabs) {
+    updateMainTabs(state, tabs) {
       state.mainTabs = tabs
     },
-    updateMainTabsActiveName (state, name) {
+    updateMainTabsActiveName(state, name) {
       state.mainTabsActiveName = name
     }
   }

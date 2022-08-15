@@ -8,9 +8,9 @@
 export default {
   name: 'App',
   created() {
-    var asizeStyle=localStorage.getItem("asizeStyle");
-    if(asizeStyle){
-      $("#asizeStyle").attr("href",asizeStyle); //实现将主题保存在内存中刷新浏览器不改变
+    var asizeStyle = localStorage.getItem('asizeStyle')
+    if (asizeStyle) {
+      $('#asizeStyle').attr('href', asizeStyle) // 实现将主题保存在内存中刷新浏览器不改变
     }
   }
 }

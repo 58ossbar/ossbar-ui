@@ -1,4 +1,4 @@
-/* 
+/*
  * 字典管理模块
  */
 
@@ -8,9 +8,9 @@ export function save() {
     url: 'dict/save',
     type: 'post',
     data: {
-      "code": 200,
-      "msg": null,
-      "data": 1
+      'code': 200,
+      'msg': null,
+      'data': 1
     }
   }
 }
@@ -20,28 +20,28 @@ export function batchDelete() {
     url: 'dict/delete',
     type: 'post',
     data: {
-      "code": 200,
-      "msg": null,
-      "data": 1
+      'code': 200,
+      'msg': null,
+      'data': 1
     }
   }
 }
 // 分页查询
 export function findPage(params) {
-  let findPageData = {
-    "code": 200,
-    "msg": null,
-    "data": {}
+  const findPageData = {
+    'code': 200,
+    'msg': null,
+    'data': {}
   }
-  let pageNum = 1
-  let pageSize = 8
-  if(params !== null) {
+  const pageNum = 1
+  const pageSize = 8
+  if (params !== null) {
     // pageNum = params.pageNum
   }
-  if(params !== null) {
+  if (params !== null) {
     // pageSize = params.pageSize
   }
-  let content = this.getContent(pageNum, pageSize)
+  const content = this.getContent(pageNum, pageSize)
   findPageData.data.pageNum = pageNum
   findPageData.data.pageSize = pageSize
   findPageData.data.totalSize = 50
@@ -53,10 +53,10 @@ export function findPage(params) {
   }
 }
 export function getContent(pageNum, pageSize) {
-  let content = []
-  for(let i=0; i<pageSize; i++) {
-    let obj = {}
-    let index = ((pageNum - 1) * pageSize) + i + 1
+  const content = []
+  for (let i = 0; i < pageSize; i++) {
+    const obj = {}
+    const index = ((pageNum - 1) * pageSize) + i + 1
     obj.id = index
     obj.value = 'value' + index
     obj.label = 'label' + index
@@ -68,13 +68,13 @@ export function getContent(pageNum, pageSize) {
     obj.name = 'dict' + index
     obj.name = 'dict' + index
     obj.remarks = 'remarks' + index
-    if(i % 2 === 0) {
+    if (i % 2 === 0) {
 
     }
-    obj.createBy= 'admin'
-    obj.createTime= '2018-08-14 11:11:11'
-    obj.createBy= 'admin'
-    obj.createTime= '2018-09-14 12:12:12'
+    obj.createBy = 'admin'
+    obj.createTime = '2018-08-14 11:11:11'
+    obj.createBy = 'admin'
+    obj.createTime = '2018-09-14 12:12:12'
     content.push(obj)
   }
   return content

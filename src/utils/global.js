@@ -10,7 +10,7 @@ export const domain = process.env.domain
 // 后台管理系统服务器地址
 export const baseUrl = process.env.baseUrl
 
- // 系统数据备份还原服务器地址
+// 系统数据备份还原服务器地址
 export const backupBaseUrl = 'http://ip:8002'
 
 export default {

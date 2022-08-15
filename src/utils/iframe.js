@@ -8,14 +8,14 @@ import { baseUrl } from '@/utils/global'
  * 嵌套页面URL地址
  * @param {*} url
  */
-export function getIFramePath (url) {
+export function getIFramePath(url) {
   let iframeUrl = ''
-  if(/^iframe:.*/.test(url)) {
+  if (/^iframe:.*/.test(url)) {
     iframeUrl = url.replace('iframe:', '')
-  } else if(/^http[s]?:\/\/.*/.test(url)) {
+  } else if (/^http[s]?:\/\/.*/.test(url)) {
     iframeUrl = url.replace('http://', '')
-    if(iframeUrl.indexOf(":") != -1) {
-      iframeUrl = iframeUrl.substring(iframeUrl.lastIndexOf(":") + 1)
+    if (iframeUrl.indexOf(':') !== -1) {
+      iframeUrl = iframeUrl.substring(iframeUrl.lastIndexOf(':') + 1)
     }
   }
   return iframeUrl
@@ -25,11 +25,11 @@ export function getIFramePath (url) {
  * 嵌套页面路由路径
  * @param {*} url
  */
-export function getIFrameUrl (url) {
+export function getIFrameUrl(url) {
   let iframeUrl = ''
-  if(/^iframe:.*/.test(url)) {
+  if (/^iframe:.*/.test(url)) {
     iframeUrl = baseUrl + url.replace('iframe:', '')
-  } else if(/^http[s]?:\/\/.*/.test(url)) {
+  } else if (/^http[s]?:\/\/.*/.test(url)) {
     iframeUrl = url
   }
   return iframeUrl
