@@ -4,6 +4,8 @@
  * 通过 this.Global 调用
  */
 
+export const appNames = '实训云平台'
+
 export const tokenKeyName = 'token'
 // 域名
 export const domain = process.env.domain

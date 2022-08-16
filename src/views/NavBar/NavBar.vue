@@ -12,7 +12,7 @@
 
       </div>
 
-      <div>{{ collapse?'':appNames }}</div>  <!--appName-->
+      <div>{{ collapse?'':appNames }}</div>
     </div>
     <!-- 导航菜单 -->
     <el-menu
@@ -32,9 +32,8 @@
 </template>
 
 <script>
-// import mock from "@/mock/index.js"
 import { mapState } from 'vuex'
-import { baseUrl } from '../../utils/global'
+import { baseUrl, appNames } from '@/utils/global'
 
 import MenuTree from '@/components/MenuTree'
 
@@ -45,7 +44,7 @@ export default {
   data() {
     return {
       logo: '',
-      appNames: '实训云平台'
+      appNames: appNames
     }
   },
   computed: {
@@ -70,6 +69,7 @@ export default {
   created() {
     this.handleRoute(this.$route)
   },
+
   mounted() {
     this.findSettingData()
   },

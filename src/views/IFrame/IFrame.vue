@@ -1,7 +1,6 @@
 <template>
   <div class="iframe-container">
-    <iframe :src="src" scrolling="auto" frameborder="0" class="frame" :onload="onloaded()">
-    </iframe>
+    <iframe :src="src" :onload="onloaded()" scrolling="auto" frameborder="0" class="frame"/>
   </div>
 </template>
 
@@ -9,9 +8,20 @@
 export default {
   data() {
     return {
-      src: "",
+      src: '',
       loading: null
-    };
+    }
+  },
+  watch: {
+    $route: {
+      handler: function(val, oldVal) {
+        // 如果是跳转到嵌套页面，切换iframe的url
+        this.resetSrc(this.$store.state.iframe.iframeUrl)
+      }
+    }
+  },
+  mounted() {
+    this.resetSrc(this.$store.state.iframe.iframeUrl)
   },
   methods: {
     // 获取路径
@@ -20,33 +30,22 @@ export default {
       this.load()
     },
     load: function() {
-      this.loading = this.$loading({  
+      this.loading = this.$loading({
         lock: true,
-        text: "loading...",
-        spinner: "el-icon-loading",
-        background: "rgba(0, 0, 0, 0.5)",
+        text: 'loading...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.5)',
         // fullscreen: false,
-        target: document.querySelector("#main-container ")
+        target: document.querySelector('#main-container ')
       })
     },
     onloaded: function() {
-      if(this.loading) {
+      if (this.loading) {
         this.loading.close()
       }
     }
-  },
-  mounted() {
-    this.resetSrc(this.$store.state.iframe.iframeUrl);
-  },
-  watch: {
-    $route: {
-      handler: function(val, oldVal) {
-        // 如果是跳转到嵌套页面，切换iframe的url
-        this.resetSrc(this.$store.state.iframe.iframeUrl);
-      }
-    }
   }
-};
+}
 </script>
 
 <style lang="scss">

@@ -13,7 +13,7 @@
       <el-table-column :label="$t('action.operation')" fixed="right" width="180">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleRestore(scope.row)">{{ $t('common.restore') }}</el-button>
-          <el-button :disabled="scope.row.name=='backup'?true:false" type="danger" size="mini" @click="handleDelete(scope.row)">{{ $t('action.delete') }}</el-button>
+          <el-button :disabled="scope.row.name=='backup'?'true':'false'" type="danger" size="mini" @click="handleDelete(scope.row)">{{ $t('action.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>

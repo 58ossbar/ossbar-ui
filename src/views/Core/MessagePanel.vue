@@ -1,20 +1,20 @@
 <template>
   <div class="message-panel">
-    <div class="message-header">您有 {{data.length}} 条消息</div>
+    <div class="message-header">您有 {{ data.length }} 条消息</div>
     <div class="message-content">
       <div v-for="item in data" :key="item.key" class="message-item">
         <div class="message-avatar">
-          <img class="avatar" :src="require('@/assets/user.png')" />
-        </div>  
+          <img :src="require('@/assets/user.png')" class="avatar" >
+        </div>
         <span class="sender">
           {{ item.sender }}
-        </span>  
+        </span>
         <span class="time">
-          <li class="fa fa-clock-o"></li> {{ item.time }}
-        </span>  
+          <li class="fa fa-clock-o"/> {{ item.time }}
+        </span>
         <div class="message-cotent">
           {{ item.content }}
-        </div>  
+        </div>
       </div>
     </div>
     <div class="message-footer">查看所有消息</div>
@@ -29,39 +29,39 @@ export default {
       type: Array,
       default: () => [
         {
-          key: "1",
-          avatar:'@/assets/user.png',
-          content:'你修改了用户密码',
-          sender:'诸葛亮',
-          time:'5分钟前'
+          key: '1',
+          avatar: '@/assets/user.png',
+          content: '你修改了用户密码',
+          sender: '诸葛亮',
+          time: '5分钟前'
         },
         {
-          key: "2",
-          avatar:'@/assets/user.png',
-          content:'你修改了用户头像',
-          sender:'武则天',
-          time:'2小时前'
+          key: '2',
+          avatar: '@/assets/user.png',
+          content: '你修改了用户头像',
+          sender: '武则天',
+          time: '2小时前'
         },
         {
-          key: "3",
-          avatar:'@/assets/user.png',
-          content:'今日25名新成员加入',
-          sender:'王语嫣',
-          time:'昨天'
+          key: '3',
+          avatar: '@/assets/user.png',
+          content: '今日25名新成员加入',
+          sender: '王语嫣',
+          time: '昨天'
         },
         {
-          key: "4",
-          avatar:'@/assets/user.png',
-          content:'您发表了一篇新随笔',
-          sender:'苍井空',
-          time:'昨天'
+          key: '4',
+          avatar: '@/assets/user.png',
+          content: '您发表了一篇新随笔',
+          sender: '苍井空',
+          time: '昨天'
         },
         {
-          key: "5",
-          avatar:'@/assets/user.png',
-          content:'您发表了一篇新随笔',
-          sender:'上官婉儿',
-          time:'前天'
+          key: '5',
+          avatar: '@/assets/user.png',
+          content: '您发表了一篇新随笔',
+          sender: '上官婉儿',
+          time: '前天'
         }]
     }
   },
@@ -69,13 +69,13 @@ export default {
     return {
     }
   },
+  mounted() {
+  },
   methods: {
-    handleClick: function () {
+    handleClick: function() {
       // 按钮操作处理函数
       this.$emit('click', {})
     }
-  },
-  mounted() {
   }
 }
 </script>
