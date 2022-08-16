@@ -72,3 +72,7 @@ npm install
 # 项目启动
 
 npm run dev
+
+# 详细安装和部署手册
+
+详见：https://www.ossbar.com/#/platformConsultingDetails?newsId=165
