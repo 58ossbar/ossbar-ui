@@ -1,16 +1,16 @@
 <template>
-  <el-dropdown trigger="click" class='international'>
-    <div>
-      <i class="fa fa-arrows-alt" @click='click'></i>
-    </div>
-  </el-dropdown>
+
+  <div>
+    <i class="fa fa-arrows-alt" @click="click"/>
+  </div>
+
 </template>
 
 <script>
 import screenfull from 'screenfull'
 
 export default {
-  name: 'screenfull',
+  name: 'Screenfull',
   methods: {
     click() {
       if (!screenfull.enabled) {

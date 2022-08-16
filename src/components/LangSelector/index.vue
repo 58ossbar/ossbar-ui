@@ -1,7 +1,7 @@
 <template>
-  <div class="lang-selector" :style="istyle" v-popover:popover>
-    <li :style="iconStyle" :class="icon"></li>
-    <el-popover ref="popover" placement="bottom-start" :trigger="trigger" v-model="visible">
+  <div v-popover:popover :style="istyle" class="lang-selector">
+    <li :style="iconStyle" :class="icon"/>
+    <el-popover ref="popover" :trigger="trigger" v-model="visible" placement="bottom-start">
       <div class="item" @click="changeLanguage('zh_cn')">简体中文</div>
       <div class="item" @click="changeLanguage('en_us')">English</div>
     </el-popover>
@@ -9,40 +9,40 @@
 </template>
 
 <script>
-  export default {
-    name: 'LangSelector',
-    props: {
-      istyle: {
-        type: String,
-        default: 'width:60px;'
-      },
-      icon: {
-        type: String,
-        default: 'fa fa-language fa-lg'
-      },
-      iconStyle: {
-        type: String,
-        default: 'color:#fff;'
-      },
-      trigger: {
-        type: String,
-        default: 'click'
-      }
+export default {
+  name: 'LangSelector',
+  props: {
+    istyle: {
+      type: String,
+      default: 'width:60px;'
     },
-    data() {
-      return {
-        visible: false
-      }
+    icon: {
+      type: String,
+      default: 'fa fa-language fa-lg'
     },
-    methods: {
-      // 语言切换
-      changeLanguage(lang) {
-        lang === '' ? 'zh_cn' : lang
-        this.$i18n.locale = lang
-        this.visible = false
-      }
+    iconStyle: {
+      type: String,
+      default: 'color:#fff;'
+    },
+    trigger: {
+      type: String,
+      default: 'click'
+    }
+  },
+  data() {
+    return {
+      visible: false
+    }
+  },
+  methods: {
+    // 语言切换
+    changeLanguage(lang) {
+      lang === '' ? 'zh_cn' : lang
+      this.$i18n.locale = lang
+      this.visible = false
     }
   }
+}
 </script>
 <style scoped lang="scss">
 .item {

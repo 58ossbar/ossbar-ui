@@ -1,15 +1,33 @@
 <template>
-  <el-color-picker
-    class="theme-picker"
-    popper-class="theme-picker-dropdown"
-    v-model="theme" 
-    :size="size">
-  </el-color-picker>
+  <div style="width: 200px;" >
+    <!--  <el-row id="fontSizeChange">
+       <el-col :span="4">
+         <span>字体大小</span>
+       </el-col>
+      <el-col :span="24">
+         <el-row>
+           <el-col :span="20">
+             <el-slider  v-model="Asize" :min="10" :max="25" @change="changeFont"  show-input input-size="mini" >
+             </el-slider>
+           </el-col>
+           <el-col :span="4" style="margin-top: 2px;">
+             <el-button size="mini"  @click="fontSizeReset">{{$t('action.reset')}}</el-button>
+           </el-col>
+         </el-row>
+       </el-col>
+     </el-row>
+     <el-row>
+       <el-col :span="24">-->
+    <el-color-picker v-model="theme" :size="size" class="theme-picker" popper-class="theme-picker-dropdown"/>
+    <el-slider id="fontSizeChange" v-model="Asize" :min="10" :max="18" show-input input-size="mini" @change="changeFont" />
+    <el-button id="fontSizeResetBtn" size="mini" @click="fontSizeReset">{{ $t('action.reset') }}</el-button>
+    <!--</el-col>
+    </el-row>-->
+  </div>
 </template>
-
 <script>
 
-const version = require('element-ui/package.json').version // element-ui version from node_modules
+// const version = require('element-ui/package.json').version // element-ui version from node_modules
 const ORIGINAL_THEME = '#409EFF' // default color
 
 export default {
@@ -22,20 +40,18 @@ export default {
     size: { // 初始化主题，可由外部传入
       type: String,
       default: 'small'
+    },
+    fontSize: { // 初始化主题，可由外部传入
+      type: Number,
+      default: 14
     }
   },
   data() {
     return {
       chalk: '', // content of theme-chalk css
       theme: ORIGINAL_THEME,
+      Asize: 14,
       showSuccess: true // 是否弹出换肤成功消息
-    }
-  },
-  mounted() {
-    if(this.default != null) {
-      this.theme = this.default
-      this.$emit('onThemeChange', this.theme)
-      this.showSuccess = false
     }
   },
   watch: {
@@ -43,7 +59,6 @@ export default {
       if (typeof val !== 'string') return
       const themeCluster = this.getThemeCluster(val.replace('#', ''))
       const originalCluster = this.getThemeCluster(oldVal.replace('#', ''))
-      console.log(themeCluster, originalCluster)
       const getHandler = (variable, id) => {
         return () => {
           const originalCluster = this.getThemeCluster(ORIGINAL_THEME.replace('#', ''))
@@ -56,14 +71,20 @@ export default {
             document.head.appendChild(styleTag)
           }
           styleTag.innerText = newStyle
+
+          if (id === 'chalk-style') {
+            const commHandler = getHandler('commChalk', 'comm-style')
+            const commUrl = `static/creatorblue/comm.css`
+            this.getCSSString(commUrl, commHandler, 'commChalk')
+          }
         }
       }
 
       const chalkHandler = getHandler('chalk', 'chalk-style')
 
       if (!this.chalk) {
-        const url = `https://unpkg.com/element-ui@${version}/lib/theme-chalk/index.css`
-        this.getCSSString(url, chalkHandler, 'chalk')
+        const chalkUrl = `static/creatorblue/theme-chalk-index.css`
+        this.getCSSString(chalkUrl, chalkHandler, 'chalk')
       } else {
         chalkHandler()
       }
@@ -78,10 +99,10 @@ export default {
         if (typeof innerText !== 'string') return
         style.innerText = this.updateStyle(innerText, originalCluster, themeCluster)
       })
-      
+
       // 响应外部操作
       this.$emit('onThemeChange', val)
-      if(this.showSuccess) {
+      if (this.showSuccess) {
         this.$message({
           message: '换肤成功',
           type: 'success'
@@ -91,7 +112,41 @@ export default {
       }
     }
   },
+  mounted() {
+    if (this.default != null) {
+      this.theme = this.default
+      this.$emit('onThemeChange', this.theme)
+      this.showSuccess = false
+    }
+    if (this.fontSize != null) {
+      this.Asize = this.fontSize
+    }
+    $('.el-color-dropdown__main-wrapper').after($('#fontSizeChange'))
+    $('.el-color-dropdown__value').after($('#fontSizeResetBtn'))
+
+    /* let jj='<el-row><el-col :span="4"><span>字体大小</span></el-col>' +
+      '<el-col :span="20"><el-row><el-col :span="20">' +
+      '<el-slider  v-model="Asize" :min="10" :max="25" @change="changeFont"  show-input input-size="mini" > </el-slider>' +
+      '</el-col><el-col :span="4" style="margin-top: 2px;">' +
+      '<button size="mini" type="primary" @click="fontSizeReset">重置</button>' +
+      '</el-col></el-row></el-col></el-row>';
+    $(".el-color-dropdown__btns").append($(jj));*/
+  },
   methods: {
+
+    fontSizeReset: function() {
+      this.Asize = 14
+      this.changeFont(14)
+    },
+    changeFont: function(fontSize) {
+      let fontStyleTag = document.getElementById('fontStyle')
+      if (!fontStyleTag) {
+        fontStyleTag = document.createElement('style')
+        fontStyleTag.setAttribute('id', 'fontStyle')
+        document.body.appendChild(fontStyleTag)
+      }
+      fontStyleTag.innerText = 'html {font-size: ' + fontSize + 'px;}'
+    },
     updateStyle(style, oldCluster, newCluster) {
       let newStyle = style
       oldCluster.forEach((color, index) => {
@@ -164,8 +219,20 @@ export default {
 .theme-picker .el-color-picker__trigger {
   vertical-align: middle;
 }
-
 .theme-picker-dropdown .el-color-dropdown__link-btn {
   display: none;
+}
+.theme-picker .el-slider__input {
+  width: 90px;
+}
+.theme-picker .el-color-dropdown__value,
+.theme-picker .el-input--mini,
+.theme-picker  .el-input__inner
+{
+  width: 80px;
+  display: inline-block;
+}
+.theme-picker .el-slider__input.el-input-number--mini {
+  width: 90px;
 }
 </style>
