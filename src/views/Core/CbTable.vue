@@ -22,27 +22,9 @@
       @select="select"
       @cell-click="cellClick"
       @current-change="handleCurrentChange" >
+      <!-- checkbox列 -->
       <el-table-column v-if="showBatchDelete & showOperation" type="selection" width="45"/>
-      <el-table-column v-if="showImg" prop="userRealname" label="真实姓名" width="100">
-        <template slot-scope="scope">
-          <span class="el-menu-item is-active" style="margin-left: -10px">{{ scope.row.userRealname }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column v-if="showImg" prop="userimg" label="头像" width="80">
-        <template slot-scope="scope">
-          <img :src="scope.row.userimg" style="width: 40px;height: 40px;display: block;border-radius: 50%">
-        </template>
-      </el-table-column>
-      <el-table-column v-if="postShowType" prop="postType" header-align="center" align="center" label="岗位类型" width="100">
-        <template slot-scope="scope">
-          <el-tag
-            v-for="item in queryFormDefault"
-            :tag="scope.row.postType"
-            :key="item.label"
-            :type="item.type"
-            size="small">{{ item.label }}</el-tag>
-        </template>
-      </el-table-column>
+      <!--数据列-->
       <el-table-column
         v-for="column in columns"
         :prop="column.prop"
@@ -53,10 +35,34 @@
         :key="column.prop"
         :type="column.type"
         :formatter="column.formatter"
-        :sortable="column.sortable==null?true:column.sortable"
+        :sortable="column.sortable == null ? true : column.sortable"
         :show-overflow-tooltip="true"
         header-align="center"
-        align="center"/>
+        align="center">
+        <template slot-scope="scope">
+          <!-- 自定义列switch开关 -->
+          <el-switch
+            v-if="['el-switch', 'switch'].includes(column.dataType)"
+            v-model="scope.row[column.prop]"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            @change="dataTypeClick($event, scope.$index, scope.row, column.callback)"/>
+          <!-- 自定义列超链接 -->
+          <span
+            v-else-if="['el-link', 'link'].includes(column.dataType)"
+            class="el-menu-item is-active"
+            style="margin-left: -10px"
+            @click="dataTypeClick($event, scope.$index, scope.row, column.callback)">
+            {{ formatterData(scope, column.prop) }}
+          </span>
+          <!--自定义列头像-->
+          <!--自定义列tag标签-->
+          <!--默认普通列-->
+          <span v-else>
+            {{ formatterData(scope, column.prop) }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column v-if="showOperation" :label="$t('action.operation')" width="155" fixed="right" header-align="center" align="center">
         <template slot-scope="scope" >
           <div v-if="permsLength<3">
@@ -66,14 +72,14 @@
               icon="fa fa-edit"
               type="primary"
               class="editButtonPost"
-              @click="handleEdit(scope.$index, scope.row)" />
+              @click="handleEdit(scope.row, scope.$index)" />
             <cb-button
               :label="$t('action.delete')"
               :perms="permsDelete"
               icon="fa fa-trash"
               class="editButtonPost"
               type="primary"
-              @click="handleDelete(scope.$index, scope.row)" />
+              @click="handleDelete(scope.row, scope.$index)" />
           </div>
           <div v-else>
             <cb-button
@@ -82,7 +88,7 @@
               icon="fa fa-edit"
               type="primary"
               class="editButtonPost"
-              @click="handleEdit(scope.$index, scope.row)" />
+              @click="handleEdit(scope.row, scope.$index)" />
             <el-dropdown ref="cbDropdown" :show-timeout="0" class="tabs-tools" trigger="click">
               <el-button ref="moreButton" size="mini" icon="fa fa-angle-down" type="primary" class="editButtonPost" @click="moreButton($event, scope.$index, scope.row,{moveUp:'0'})">{{ $t('action.more') }}</el-button>
               <el-dropdown-menu slot="dropdown">
@@ -92,7 +98,7 @@
                     :perms="permsDelete"
                     icon="fa fa-trash"
                     class="treeHoverUlButtom"
-                    @click="handleDelete(scope.$index, scope.row)" />
+                    @click="handleDelete(scope.row, scope.$index)" />
                 </el-dropdown-item>
                 <el-dropdown-item class="widthAll paddingNone" style="height: auto;line-height: 20px;">
                   <cb-button
@@ -101,7 +107,7 @@
                     :perms="permsMove"
                     icon="fa fa-long-arrow-up"
                     class="treeHoverUlButtom"
-                    @click="handleMove(scope.$index, scope.row,{moveUp:'0'}, $event)" />
+                    @click="handleMove(scope.row, scope.$index, {moveUp:'0'}, $event)" />
                 </el-dropdown-item>
                 <el-dropdown-item class="widthAll paddingNone" style="height: auto;line-height: 20px;">
                   <cb-button
@@ -110,7 +116,7 @@
                     :perms="permsMove"
                     icon="fa fa-long-arrow-down"
                     class="treeHoverUlButtom"
-                    @click="handleMove(scope.$index, scope.row,{moveDown:'0'}, $event)" />
+                    @click="handleMove(scope.row, scope.$index, {moveDown:'0'}, $event)" />
                 </el-dropdown-item>
                 <el-dropdown-item class="widthAll paddingNone" style="height: auto;line-height: 20px;">
                   <cb-button
@@ -118,7 +124,7 @@
                     :perms="permsView"
                     icon="fa fa-low-vision"
                     class="treeHoverUlButtom"
-                    @click="handleView(scope.$index, scope.row)" />
+                    @click="handleView(scope.row, scope.$index)" />
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -174,13 +180,12 @@ export default {
     CbButton
   },
   props: {
-    // 表格列配置
-    columns: {
-      type: Array,
-      default: () => { return [] }
+    parentVue: {
+      type: Object,
+      required: true
     },
     // 表格列配置
-    queryFormDefault: {
+    columns: {
       type: Array,
       default: () => { return [] }
     },
@@ -336,6 +341,10 @@ export default {
     })
   },
   methods: {
+    // 自定义列增加formatter格式化函数
+    formatterData: function(scope, prop) {
+      return scope.column.formatter ? scope.column.formatter(scope.row, scope.column, scope.row[prop]) : scope.row[prop]
+    },
     // 分页查询
     findPage: function() {
       this.loading = true
@@ -366,17 +375,17 @@ export default {
     },
     // 选择切换
     handleCurrentChange: function(val) {
-      this.$emit('handleCurrentChange', { val: val })
+      this.$emit('handleCurrentChange', val)
     },
     // 修改
-    handleEdit: function(index, row) {
-      this.$emit('handleEdit', { index: index, row: row, tableVue: this.$refs.table })
+    handleEdit: function(row, index) {
+      this.$emit('handleEdit', row, index, this.$refs.table)
     },
-    handleMove: function(index, row, moves, event) {
-      this.$emit('handleMove', { row: row, index: index, moves: moves, event })
+    handleMove: function(row, index, moves, event) {
+      this.$emit('handleMove', row, index, moves, event)
     },
     // 删除
-    handleDelete: function(index, row) {
+    handleDelete: function(row, index) {
       if (row.id) {
         // 先清除所有选中项目
         this.$refs.table.clearSelection()
@@ -384,7 +393,7 @@ export default {
         this.$refs.table.toggleRowSelection(row)
         this.delete(row.id, row)
       } else {
-        this.$emit('handleDeleteOther', { obj: row, vue: this.$refs.table })
+        this.$emit('handleDeleteOther', row, this.$refs.table)
       }
     },
     // 批量删除
@@ -475,7 +484,20 @@ export default {
      * @param row
      * @param data
      */
-    moreButton(event, index, row, data) {}
+    moreButton(event, index, row, data) {},
+
+    /**
+     *  自定义列的点击事件
+     * @param {*} event
+     * @param {*} index 下标
+     * @param {*} row 当前被点击的行数据
+     * @param {*} callbackName 自定义的回调函数名称
+     */
+    dataTypeClick(event, index, row, callbackName) {
+      if (callbackName) {
+        this.parentVue[callbackName](row, index, event)
+      }
+    }
   }
 }
 </script>

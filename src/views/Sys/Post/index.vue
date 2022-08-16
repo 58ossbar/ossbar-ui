@@ -12,14 +12,16 @@
             </el-col>
             <el-col :span="6">
               <el-form-item class="dictInputQueryWidth textAlign">
-                <el-select v-model="filters.postType" class="widthAll" placeholder="请选择" clearable>
-                  <el-option
-                    v-for="item in queryFormDefaultOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                    class="dictQueryOptionPadding"/>
-                </el-select>
+                <cb-dict
+                  :parent-vue="_self"
+                  :change="findPage"
+                  :filters="filters"
+                  placeholder="请选择"
+                  name="postType"
+                  dict="sex"
+                  type="select"
+                  empty-label="全部"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="2">
@@ -35,7 +37,7 @@
           </el-row>
           <el-row class="elDeptFormButton dictQueryCenterButton">
             <el-col :span="24">
-              <cb-button :label="$t('action.search')" icon="fa fa-search" perms="sys:tsyspost:query" type="primary" @click="findPage(null)"/>
+              <cb-button :loading="loadingQuery" :label="$t('action.search')" icon="fa fa-search" perms="sys:tsyspost:query" type="primary" @click="findPage()"/>
               <cb-button :label="$t('action.add')" icon="fa fa-plus" type="primary" perms="sys:tsyspost:add" @click="handleAdd" />
             </el-col>
           </el-row>
@@ -44,10 +46,9 @@
       <!--表格内容栏-->
       <el-main class="box_shadows bgcolor  scrollRightYDictMenu tableDict marginBottom">
         <cb-table
-          :post-show-type="true"
+          :parent-vue="_self"
           :data="pageResult"
           :columns="columns"
-          :query-form-default="queryFormDefault"
           :is-open="isOpen"
           perms-edit="sys:tsyspost:edit"
           perms-delete="sys:tsyspost:remove"
@@ -62,7 +63,7 @@
           @handleDeleteOther="handleDelete"/>
       </el-main>
     </el-container>
-    <SaveForm ref="addForm" @ok="handleOk" />
+    <save-form ref="saveForm" @ok="handleOk" />
   </div>
 </template>
 
@@ -83,10 +84,12 @@ export default {
         postType: '',
         postName: ''
       },
+      loadingQuery: false,
       loading: false,
       isOpen: true, // 是否开启点击表格行也选中
       columns: [
-        { prop: 'postName', label: '岗位名称', minWidth: 60 },
+        { prop: 'postType', label: '岗位类型', minWidth: 60, dataType: 'link', callback: 'myClick' },
+        { prop: 'postName', label: '岗位名称', minWidth: 60, dataType: 'link', callback: 'myClick' },
         { prop: 'sort', label: '排序号', minWidth: 60 },
         { prop: 'remark', label: '岗位描述', minWidth: 80 },
         { prop: 'createUserId', label: '创建人', minWidth: 70 },
@@ -102,22 +105,13 @@ export default {
         currPage: 1, // 当前页码  page
         pagerCount: 5 // 显示几个页数按钮
       },
-      queryFormDefaultOptions: [
-        { value: '', label: '全部' },
-        { value: '0', label: '公司领导' },
-        { value: '1', label: '普通员工' }
-      ],
-      queryFormDefaultType: ['', 'success', 'info', 'warning', 'danger'],
-      queryFormDefault: [
-        { value: '0', label: '公司领导', type: '' },
-        { value: '1', label: '普通员工', type: 'success' }
-      ],
       pageSizes: [10, 20, 30, 40],
       pageResult: {}
     }
   },
   methods: {
     findPage(data) {
+      this.loadingQuery = true
       if (data && data !== null) {
         this.pageRequest = data.pageRequest
       } else {
@@ -127,12 +121,15 @@ export default {
       this.filters.limit = this.pageRequest.pageSize
       this.$api.post.findPage(this.filters).then(res => {
         this.pageResult = res.data
+        this.loadingQuery = false
       }).then(data != null ? data.callback : '')
     },
     handleAdd() {
-      this.$refs.addForm.handleAdd()
+      this.$refs.saveForm.handleAdd()
     },
-    handleEdit() {},
+    handleEdit(row) {
+      this.$refs.saveForm.handleEdit(row)
+    },
     handleOk(data) {
       this.findPage()
     },

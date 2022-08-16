@@ -17,9 +17,14 @@
       @keyup.enter.native="submitForm()"
     >
       <el-form-item label="岗位类型" prop="postType">
-        <el-select v-model="dataForm.postType" class="widthAll" placeholder="请选择" clearable>
-          <el-option v-for="item in postTypeList" :key="item.value" :label="item.label" :value="item.value" class="dictQueryOptionPadding"/>
-        </el-select>
+        <cb-dict
+          :parent-vue="_self"
+          :data-form="dataForm"
+          placeholder="请选择岗位类型"
+          name="postType"
+          dict="sex"
+          type="select"
+        />
       </el-form-item>
       <el-form-item label="岗位名称" prop="postName">
         <el-input v-model="dataForm.postName" maxlength="50" type="text" clearable auto-complete="off"/>
@@ -76,22 +81,27 @@ export default {
       dataRule: {
         postName: [{ validator: validateName, required: true, message: '岗位名称不能为空', trigger: 'blur' }],
         postType: [{ required: true, message: '岗位类型不能为空', trigger: 'blur' }]
-      },
-      // 岗位类型
-      postTypeList: [
-        { value: '0', label: '公司领导' },
-        { value: '1', label: '普通员工' }
-      ]
+      }
     }
   },
   methods: {
     handleAdd() {
       this.operation = true
       this.dialogVisible = true
+      if (this.$refs['dataForm']) {
+        this.$refs['dataForm'].clearValidate()
+      }
     },
-    handleEdit() {
+    handleEdit(row) {
       this.operation = false
       this.dialogVisible = true
+      console.log(row)
+      // 赋值
+      this.dataForm.postId = row.postId
+      this.dataForm.postName = row.postName
+      this.dataForm.postType = row.postType
+      this.dataForm.sort = row.sort
+      this.dataForm.remark = row.remark
     },
     submitForm(continueFlag) {
       this.$refs.dataForm.validate((valid) => {
@@ -103,7 +113,7 @@ export default {
               this.loading = false
               if (res.code === 0) {
                 this.$message.success(res.msg)
-                if (continueFlag) {
+                if (typeof continueFlag === 'boolean') {
                   this.resetFormDatas()
                 } else {
                   this.dialogVisible = false
