@@ -73,7 +73,8 @@
               :perms="btnColumn.perms"
               type="primary"
               class="editButtonPost"
-              @click="handleClick(scope.row, scope.$index, btnColumn.callback)"/>
+              @click="handleClick(scope.row, scope.$index, btnColumn.callback)"
+            />
           </div>
           <div v-else>
             <cb-button
@@ -82,16 +83,36 @@
               :perms="btnColumns[0].perms"
               type="primary"
               class="editButtonPost"
-              @click="handleClick(scope.row, scope.$index, btnColumns[0].callback)"/>
+              @click="handleClick(scope.row, scope.$index, btnColumns[0].callback)"
+            />
             <el-dropdown ref="cbDropdown" :show-timeout="0" class="tabs-tools" trigger="click">
               <el-button ref="moreButton" size="mini" icon="fa fa-angle-down" type="primary" class="editButtonPost" >{{ $t('action.more') }}</el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-for="(btnColumn,index) in btnColumns" :key="btnColumn.label" class="widthAll paddingNone" style="height: auto;line-height: 20px;" >
+                  <!-- 上移下移按钮 -->
                   <cb-button
-                    v-if="index > 0"
+                    v-if="index > 0 && scope.$index !== 0 && btnColumn.moveType && ['up', 'moveUp'].includes(btnColumn.moveType)"
                     :icon="btnColumn.icon"
                     :label="btnColumn.label"
                     :perms="btnColumn.perms"
+                    :title="btnColumn.title"
+                    class="treeHoverUlButtom"
+                    @click="handleClick(scope.row, scope.$index, btnColumn.callback)"/>
+                  <cb-button
+                    v-if="index > 0 && scope.$index+1!==data.list.length && btnColumn.moveType && ['down', 'moveDown'].includes(btnColumn.moveType)"
+                    :icon="btnColumn.icon"
+                    :label="btnColumn.label"
+                    :perms="btnColumn.perms"
+                    :title="btnColumn.title"
+                    class="treeHoverUlButtom"
+                    @click="handleClick(scope.row, scope.$index, btnColumn.callback)"/>
+                  <!-- 其它按钮 -->
+                  <cb-button
+                    v-if="index > 0 && !btnColumn.moveType"
+                    :icon="btnColumn.icon"
+                    :label="btnColumn.label"
+                    :perms="btnColumn.perms"
+                    :title="btnColumn.title"
                     class="treeHoverUlButtom"
                     @click="handleClick(scope.row, scope.$index, btnColumn.callback)"/>
                 </el-dropdown-item>

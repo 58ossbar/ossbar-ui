@@ -15,6 +15,8 @@ export const domain = process.env.domain
 export const baseUrl = process.env.baseUrl
 // 系统数据备份还原服务器地址
 export const backupBaseUrl = 'http://ip:8002'
+// 接口错误时的提示语
+export const interfaceFailMessage = '接口调用失败'
 
 export default {
   domain,

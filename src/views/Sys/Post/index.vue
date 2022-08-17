@@ -97,8 +97,8 @@ export default {
       ],
       btnColumns: [
         { icon: 'fa fa-edit', label: '修改', perms: 'book:tevglbookmajor:edit', callback: 'handleEdit' },
-        { icon: 'fa fa-bars', label: '上移', perms: 'book:tevglbookmajor:content', callback: 'handleContent' },
-        { icon: 'fa fa-bars', label: '下移', perms: 'pkg:tevglpkginfo:changePackage', callback: 'handlePackage' },
+        { icon: 'fa fa-long-arrow-up', label: '上移', perms: 'book:tevglbookmajor:content', callback: 'handleMoveUp', moveType: 'moveUp', title: '修改排序号' },
+        { icon: 'fa fa-long-arrow-down', label: '下移', perms: 'pkg:tevglpkginfo:changePackage', callback: 'handleMoveDown', moveType: 'moveDown', title: '修改排序号' },
         { icon: 'fa fa-trash', label: '删除', perms: 'book:tevglbookmajor:remove', callback: 'handleDelete' }
       ],
       pageRequest: {
@@ -139,7 +139,6 @@ export default {
     },
     selectionChange() {},
     toggleRowSelection() {},
-    handleMove() {},
     handleDelete(row) {
       this.handleBatchDelete([row.postId])
     },
@@ -160,6 +159,54 @@ export default {
         })
       }).catch(() => {
         this.$message({ type: 'info', message: '删除未成功' })
+      })
+    },
+    handleMoveUp(row, index) {
+      const commitData = {
+        currPostId: row.postId,
+        targetPostId: this.pageResult.list[index - 1].postId
+      }
+      this.$confirm('确认上移选中记录吗？', '提示', {
+        type: 'warning',
+        closeOnClickModal: false
+      }).then(() => {
+        this.$api.post.postMove(commitData).then(res => {
+          if (res.code === 0) {
+            this.$message({ message: '上移成功', type: 'success' })
+            this.findPage()
+          } else {
+            this.$message.error(res.msg)
+          }
+        }).catch(() => {
+          // this.$message({ type: 'info', message: this.global.interfaceFailMessage })
+          this.$message({ type: 'info', message: '接口调用失败' })
+        })
+      }).catch(() => {
+        this.$message({ type: 'info', message: '已取消上移' })
+      })
+    },
+    handleMoveDown(row, index) {
+      const commitData = {
+        currPostId: row.postId,
+        targetPostId: this.pageResult.list[index + 1].postId
+      }
+      this.$confirm('确认下移选中记录吗？', '提示', {
+        type: 'warning',
+        closeOnClickModal: false
+      }).then(() => {
+        this.$api.post.postMove(commitData).then(res => {
+          if (res.code === 0) {
+            this.$message({ message: '下移成功', type: 'success' })
+            this.findPage()
+          } else {
+            this.$message.error(res.msg)
+          }
+        }).catch(() => {
+          // this.$message({ type: 'info', message: this.global.interfaceFailMessage })
+          this.$message({ type: 'info', message: '接口调用失败' })
+        })
+      }).catch(() => {
+        this.$message({ type: 'info', message: '已取消下移' })
       })
     }
   }
