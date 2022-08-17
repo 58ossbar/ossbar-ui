@@ -49,18 +49,16 @@
           :parent-vue="_self"
           :data="pageResult"
           :columns="columns"
+          :btn-columns="btnColumns"
           :is-open="isOpen"
-          perms-edit="sys:tsyspost:edit"
-          perms-delete="sys:tsyspost:remove"
-          perms-move="sys:tsyspost:query"
+          perms-batch-delete="sys:tsyspost:add"
           row-key="postId"
           @findPage="findPage"
           @pageSizes="pageSizes"
           @toggleRowSelection="toggleRowSelection"
-          @handleMove="handleMove"
           @selectionChange="selectionChange"
           @handleEdit="handleEdit"
-          @handleDeleteOther="handleDelete"/>
+          @handleBatchDelete="handleBatchDelete"/>
       </el-main>
     </el-container>
     <save-form ref="saveForm" @ok="handleOk" />
@@ -88,14 +86,20 @@ export default {
       loading: false,
       isOpen: true, // 是否开启点击表格行也选中
       columns: [
-        { prop: 'postType', label: '岗位类型', minWidth: 60, dataType: 'link', callback: 'myClick' },
-        { prop: 'postName', label: '岗位名称', minWidth: 60, dataType: 'link', callback: 'myClick' },
+        { prop: 'postType', label: '岗位类型', minWidth: 60 },
+        { prop: 'postName', label: '岗位名称', minWidth: 60 },
         { prop: 'sort', label: '排序号', minWidth: 60 },
         { prop: 'remark', label: '岗位描述', minWidth: 80 },
         { prop: 'createUserId', label: '创建人', minWidth: 70 },
         { prop: 'createTime', label: '创建时间', minWidth: 90 },
         { prop: 'updateUserId', label: '修改人', minWidth: 70 },
         { prop: 'updateTime', label: '修改时间', minWidth: 90 }
+      ],
+      btnColumns: [
+        { icon: 'fa fa-edit', label: '修改', perms: 'book:tevglbookmajor:edit', callback: 'handleEdit' },
+        { icon: 'fa fa-bars', label: '上移', perms: 'book:tevglbookmajor:content', callback: 'handleContent' },
+        { icon: 'fa fa-bars', label: '下移', perms: 'pkg:tevglpkginfo:changePackage', callback: 'handlePackage' },
+        { icon: 'fa fa-trash', label: '删除', perms: 'book:tevglbookmajor:remove', callback: 'handleDelete' }
       ],
       pageRequest: {
         totalCount: 188, // 总共多少条数据
@@ -136,8 +140,28 @@ export default {
     selectionChange() {},
     toggleRowSelection() {},
     handleMove() {},
-    handleDelete() {},
-    handleDeleteOther() {}
+    handleDelete(row) {
+      this.handleBatchDelete([row.postId])
+    },
+    handleBatchDelete(ids) {
+      this.$confirm('确认删除选中记录吗？', '提示', {
+        type: 'warning',
+        closeOnClickModal: false
+      }).then(() => {
+        this.$api.post.batchDelete(ids).then(res => {
+          if (res.code !== 0) {
+            this.$message.error(res.msg)
+          } else {
+            this.$message({ message: '操作成功', type: 'success' })
+            this.findPage()
+          }
+        }).catch(() => {
+          this.$message({ type: 'error', message: '删除失败,接口异常' })
+        })
+      }).catch(() => {
+        this.$message({ type: 'info', message: '删除未成功' })
+      })
+    }
   }
 }
 </script>

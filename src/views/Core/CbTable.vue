@@ -8,8 +8,6 @@
       :data="data.list"
       :highlight-current-row="highlightCurrentRow"
       :is-open="isOpen"
-      :cbid="cbid"
-      :show-user-name="showUserName"
       :element-loading-text="$t('action.loading')"
       :border="border"
       :stripe="stripe"
@@ -23,7 +21,7 @@
       @cell-click="cellClick"
       @current-change="handleCurrentChange" >
       <!-- checkbox列 -->
-      <el-table-column v-if="showBatchDelete & showOperation" type="selection" width="45"/>
+      <el-table-column v-if="checkbox" type="selection" width="45"/>
       <!--数据列-->
       <el-table-column
         v-for="column in columns"
@@ -63,100 +61,70 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column v-if="showOperation" :label="$t('action.operation')" width="155" fixed="right" header-align="center" align="center">
+      <!--操作列-->
+      <el-table-column v-if="btnColumns && btnColumns.length > 0" :label="$t('action.operation')" width="155" fixed="right" header-align="center" align="center">
         <template slot-scope="scope" >
-          <div v-if="permsLength<3">
+          <div v-if="btnColumns.length < 3">
             <cb-button
-              :label="$t('action.edit')"
-              :perms="permsEdit"
-              icon="fa fa-edit"
+              v-for="btnColumn in btnColumns"
+              :key="btnColumn.label"
+              :icon="btnColumn.icon"
+              :label="btnColumn.label"
+              :perms="btnColumn.perms"
               type="primary"
               class="editButtonPost"
-              @click="handleEdit(scope.row, scope.$index)" />
-            <cb-button
-              :label="$t('action.delete')"
-              :perms="permsDelete"
-              icon="fa fa-trash"
-              class="editButtonPost"
-              type="primary"
-              @click="handleDelete(scope.row, scope.$index)" />
+              @click="handleClick(scope.row, scope.$index, btnColumn.callback)"/>
           </div>
           <div v-else>
             <cb-button
-              :label="$t('action.edit')"
-              :perms="permsEdit"
-              icon="fa fa-edit"
+              :icon="btnColumns[0].icon"
+              :label="btnColumns[0].label"
+              :perms="btnColumns[0].perms"
               type="primary"
               class="editButtonPost"
-              @click="handleEdit(scope.row, scope.$index)" />
+              @click="handleClick(scope.row, scope.$index, btnColumns[0].callback)"/>
             <el-dropdown ref="cbDropdown" :show-timeout="0" class="tabs-tools" trigger="click">
-              <el-button ref="moreButton" size="mini" icon="fa fa-angle-down" type="primary" class="editButtonPost" @click="moreButton($event, scope.$index, scope.row,{moveUp:'0'})">{{ $t('action.more') }}</el-button>
+              <el-button ref="moreButton" size="mini" icon="fa fa-angle-down" type="primary" class="editButtonPost" >{{ $t('action.more') }}</el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item class="widthAll paddingNone" style="height: auto;line-height: 20px;">
+                <el-dropdown-item v-for="(btnColumn,index) in btnColumns" :key="btnColumn.label" class="widthAll paddingNone" style="height: auto;line-height: 20px;" >
                   <cb-button
-                    :label="$t('action.delete')"
-                    :perms="permsDelete"
-                    icon="fa fa-trash"
+                    v-if="index > 0"
+                    :icon="btnColumn.icon"
+                    :label="btnColumn.label"
+                    :perms="btnColumn.perms"
                     class="treeHoverUlButtom"
-                    @click="handleDelete(scope.row, scope.$index)" />
-                </el-dropdown-item>
-                <el-dropdown-item class="widthAll paddingNone" style="height: auto;line-height: 20px;">
-                  <cb-button
-                    v-if="scope.$index!==0"
-                    :label="$t('action.moveUp')"
-                    :perms="permsMove"
-                    icon="fa fa-long-arrow-up"
-                    class="treeHoverUlButtom"
-                    @click="handleMove(scope.row, scope.$index, {moveUp:'0'}, $event)" />
-                </el-dropdown-item>
-                <el-dropdown-item class="widthAll paddingNone" style="height: auto;line-height: 20px;">
-                  <cb-button
-                    v-if="scope.$index+1!==data.list.length"
-                    :label="$t('action.moveDown')"
-                    :perms="permsMove"
-                    icon="fa fa-long-arrow-down"
-                    class="treeHoverUlButtom"
-                    @click="handleMove(scope.row, scope.$index, {moveDown:'0'}, $event)" />
-                </el-dropdown-item>
-                <el-dropdown-item class="widthAll paddingNone" style="height: auto;line-height: 20px;">
-                  <cb-button
-                    :label="$t('action.view')"
-                    :perms="permsView"
-                    icon="fa fa-low-vision"
-                    class="treeHoverUlButtom"
-                    @click="handleView(scope.row, scope.$index)" />
+                    @click="handleClick(scope.row, scope.$index, btnColumn.callback)"/>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
         </template>
       </el-table-column>
-      <!--是否开启Switch 开关-->
-      <el-table-column v-if="isShow" prop="status" label="状态" width="60">
-        <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.status"
-            :active-value="activeValue"
-            :inactive-value="inactiveValue"
-            :active-text="activeText"
-            :inactive-text="inactiveText"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            @change="switchChange($event, scope.$index, scope.row)"/>
-        </template>
-      </el-table-column>
+
     </el-table>
     <!--分页栏-->
     <div class="toolbar" style="padding:10px;margin-bottom: 20px;margin-top: 10px">
       <cb-button
-        v-if="showBatchDelete & showOperation & isShowBatchDelete"
+        v-if="selections.length > 0"
         :label="$t('action.batchDelete')"
-        :perms="permsDelete"
+        :perms="permsBatchDelete"
         :size="size"
-        :disabled="selections.length===0"
+        :disabled="selections.length === 0"
         type="primary"
         style="float:left;"
-        @click="handleBatchDelete()"/>
+        @click="handleBatchDelete()">
+        <template v-if="otherBatchBtnColumns && otherBatchBtnColumns.length > 0 && selections.length > 0">
+          <cb-button
+            v-for="btnColumn in otherBatchBtnColumns"
+            :key="btnColumn.label"
+            :label="btnColumn.label"
+            :perms="btnColumn.perms"
+            size="small"
+            type="primary"
+            style="float:left;"
+            @click="handleOtherBatchClick(btnColumns.callback)"/>
+        </template>
+      </cb-button>
       <el-pagination
         :current-page="pageRequest.pageNum"
         :page-size="pageRequest.pageSize"
@@ -184,8 +152,22 @@ export default {
       type: Object,
       required: true
     },
+    rowKey: {
+      type: String,
+      required: true
+    },
     // 表格列配置
     columns: {
+      type: Array,
+      default: () => { return [] }
+    },
+    // 操作列中的按钮定义，数据格式为json数组，示例如下，如果不需要操作列，则不传
+    btnColumns: {
+      type: Array,
+      default: () => { return [] }
+    },
+    // 选中列后 出现在 批量删除 一起的 的按钮定义，数据格式为json数组，示例如下，如果不需要其他批量操作，则不传
+    otherBatchBtnColumns: {
       type: Array,
       default: () => { return [] }
     },
@@ -194,23 +176,15 @@ export default {
       type: Object,
       default: () => { return {} }
     },
-    // 修改权限标识
-    permsEdit: {
-      type: String,
-      default: ''
+    // 表格是否显示多选框
+    checkbox: {
+      type: Boolean,
+      default: true
     },
-    // 删除权限标识
-    permsDelete: {
+    // 批量删除按钮的权限标识，如果不需要该按钮，则不传，可选参数
+    permsBatchDelete: {
       type: String,
-      default: ''
-    },
-    permsMove: {
-      type: String,
-      default: ''
-    },
-    // 查看明细权限标识
-    permsView: {
-      type: String,
+      required: false,
       default: ''
     },
     // 尺寸样式
@@ -228,21 +202,6 @@ export default {
     maxHeight: {
       type: Number,
       default: 420
-    },
-    // 是否显示操作组件
-    showOperation: {
-      type: Boolean,
-      default: true
-    },
-    // 显示图片
-    showImg: {
-      type: Boolean,
-      default: false
-    },
-    // 显示岗位类型
-    postShowType: {
-      type: Boolean,
-      default: false
     },
     // 是否显示表格边框，布尔值类型时，组件使用那边直接用 border 就行，无需定义布尔类型的变量 :border="flag" flag: true
     border: {
@@ -265,22 +224,9 @@ export default {
       type: Boolean,
       default: true
     },
-    // 是否显示操作组件
-    showBatchDelete: {
-      type: Boolean,
-      default: true
-    },
     isOpen: {
       type: Boolean,
       default: false
-    },
-    showUserName: {
-      type: Boolean,
-      default: false
-    },
-    cbid: {
-      type: String,
-      default: ''
     },
     // 是否开启switch开关
     isShow: { type: Boolean, default: false },
@@ -291,14 +237,7 @@ export default {
     // switch 打开时的文字描述
     activeText: { type: String, default: '' },
     // switch 关闭时的文字描述
-    inactiveText: { type: String, default: '' },
-    // 文本对齐方式
-    rowKey: {
-      type: String,
-      default: ''
-    },
-    // 是否显示左下角批量删除按钮
-    isShowBatchDelete: { type: Boolean, default: true }
+    inactiveText: { type: String, default: '' }
   },
   data() {
     return {
@@ -323,27 +262,22 @@ export default {
   },
   mounted() {
     this.refreshPageRequest(1)
-    this.$nextTick(function() {
-      if (this.permsEdit) {
-        this.perms.permsEdit = this.permsEdit
-      }
-      if (this.permsDelete) {
-        this.perms.permsDelete = this.permsDelete
-      }
-      if (this.permsMove) {
-        this.perms.permsMove = this.permsMove
-      }
-      // 查看明细
-      if (this.permsView) {
-        this.perms.permsView = this.permsView
-      }
-      this.permsLength = Object.keys(this.perms).length
-    })
   },
   methods: {
     // 自定义列增加formatter格式化函数
     formatterData: function(scope, prop) {
       return scope.column.formatter ? scope.column.formatter(scope.row, scope.column, scope.row[prop]) : scope.row[prop]
+    },
+    // 操作栏按钮回调事件
+    handleClick: function(index, row, callback) {
+      // 处理-表格行的选中效果
+      // 先清除选中效果
+      this.$refs.table.clearSelection()
+      // 再重新选中当前选中的行
+      this.$refs.table.toggleRowSelection(row)
+      if (callback) {
+        this.parentVue[callback](index, row)
+      }
     },
     // 分页查询
     findPage: function() {
@@ -360,7 +294,7 @@ export default {
     // 选择切换
     selectionChange: function(selections) {
       this.selections = selections
-      this.$emit('selectionChange', { selections: selections, vue: this.$refs.table })
+      this.$emit('selectionChange', selections, this.$refs.table)
     },
     handleSizeChange: function(val) {
       this.pageRequest.pageSize = val
@@ -376,13 +310,6 @@ export default {
     // 选择切换
     handleCurrentChange: function(val) {
       this.$emit('handleCurrentChange', val)
-    },
-    // 修改
-    handleEdit: function(row, index) {
-      this.$emit('handleEdit', row, index, this.$refs.table)
-    },
-    handleMove: function(row, index, moves, event) {
-      this.$emit('handleMove', row, index, moves, event)
     },
     // 删除
     handleDelete: function(row, index) {
@@ -401,42 +328,13 @@ export default {
       if (this.selections.length < 1) {
         this.$message({ message: '请选择一条记录', type: 'warning' })
       } else {
-        if (this.selections[0].id) {
-          const ids = this.selections.map(item => item.id).toString()
-          this.delete(ids)
-        } else {
-          this.$emit('handleBatchDelete', { params: this.selections })
-          this.$emit('handleDeleteOther', { params: this.selections, vue: this.$refs.table })
-          this.$emit('handleBatchDeleteOther', { params: this.selections, vue: this.$refs.table })
+        // const ids = this.selections.map(item => item[this.rowKey]).toString()
+        const ids = this.selections.map(item => { return item[this.rowKey] })
+        if (!ids && !ids.length) {
+          return false
         }
+        this.$emit('handleBatchDelete', ids, this.selections)
       }
-    },
-    // 删除操作
-    delete: function(ids, row) {
-      this.$confirm('确认删除选中记录吗？', '提示', {
-        type: 'warning',
-        closeOnClickModal: false
-      }).then(() => {
-        const params = []
-        const idArray = (ids + '').split(',')
-        for (var i = 0; i < idArray.length; i++) {
-          params.push({ 'id': idArray[i] })
-        }
-        this.loading = true
-        const callback = res => {
-          if (res.code === 0) {
-            this.$message({ message: '删除成功', type: 'success' })
-            this.findPage()
-          } else {
-            this.$message({ message: '操作失败, ' + res.msg, type: 'error' })
-          }
-          this.loading = false
-        }
-        this.$emit('handleDelete', { params: params, callback: callback, obj: row })
-      }).catch(() => {
-        // 清除表格所有选中项
-        this.$refs.table.clearSelection()
-      })
     },
     // 点击表格中的行触发该事件
     rowClick: function(row, column, event) {

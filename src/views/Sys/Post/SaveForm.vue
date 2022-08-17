@@ -38,7 +38,7 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button :size="size" @click="dialogVisible = false">{{ $t('action.cancel') }}</el-button>
-      <el-button :size="size" :loading="loading" type="primary" @click="submitForm(true)" >{{ $t('action.saveContinue') }}</el-button>
+      <el-button v-if="operation" :size="size" :loading="loading" type="primary" @click="submitForm(true)" >{{ $t('action.saveContinue') }}</el-button>
       <el-button :size="size" :loading="loading" type="primary" @click="submitForm" >{{ $t('action.preservation') }}</el-button>
     </div>
   </el-dialog>
@@ -91,44 +91,70 @@ export default {
       if (this.$refs['dataForm']) {
         this.$refs['dataForm'].clearValidate()
       }
+      this.$api.post.getMaxSortNum().then(res => {
+        this.dataForm.sort = res.data
+      })
     },
     handleEdit(row) {
       this.operation = false
       this.dialogVisible = true
-      console.log(row)
-      // 赋值
-      this.dataForm.postId = row.postId
-      this.dataForm.postName = row.postName
-      this.dataForm.postType = row.postType
-      this.dataForm.sort = row.sort
-      this.dataForm.remark = row.remark
+      this.$api.post.view(row.postId).then(res => {
+        if (res.code === 0) {
+          // 赋值
+          this.dataForm = Object.assign({}, res.data)
+        }
+      })
     },
     submitForm(continueFlag) {
       this.$refs.dataForm.validate((valid) => {
         if (valid) {
           this.$confirm('确认提交吗？', '提示', { closeOnClickModal: false, type: 'warning' }).then(() => {
             this.loading = true
-            const submitData = Object.assign({}, this.dataForm)
-            this.$api.post.save(submitData).then((res) => {
-              this.loading = false
-              if (res.code === 0) {
-                this.$message.success(res.msg)
-                if (typeof continueFlag === 'boolean') {
-                  this.resetFormDatas()
-                } else {
-                  this.dialogVisible = false
-                }
-                this.$emit('ok', submitData)
-              } else {
-                this.$message.error(res.msg)
-              }
-            }).catch(() => {
-              this.loading = false
-            })
+            if (this.operation) {
+              this.save(continueFlag)
+            } else {
+              this.update()
+            }
           }).catch(() => {
             this.loading = false
           })
         }
+      })
+    },
+    save(continueFlag) {
+      const submitData = Object.assign({}, this.dataForm)
+      this.$api.post.save(submitData).then((res) => {
+        this.loading = false
+        if (res.code === 0) {
+          this.$message.success(res.msg)
+          if (typeof continueFlag === 'boolean') {
+            this.resetFormDatas()
+          } else {
+            this.dialogVisible = false
+          }
+          this.$emit('ok', submitData)
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+    update() {
+      const submitData = Object.assign({}, this.dataForm)
+      this.$api.post.update(submitData).then((res) => {
+        this.loading = false
+        if (res.code === 0) {
+          this.$message.success(res.msg)
+          this.resetFormDatas()
+          this.dialogVisible = false
+          this.$emit('ok', submitData)
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(() => {
+        this.$message.error('接口调用失败')
+        this.loading = false
       })
     },
     handleClose() {

@@ -7,6 +7,9 @@ import store from '@/store'
 export function hasPermission(perms) {
   let hasPermission = false
   const permissions = store.state.user.perms
+  if (!permissions || !permissions.length) {
+    return false
+  }
   for (let i = 0, len = permissions.length; i < len; i++) {
     if (permissions[i] === perms) {
       hasPermission = true

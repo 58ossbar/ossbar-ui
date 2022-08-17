@@ -4,22 +4,6 @@ import axios from '@/http/axios'
  * 岗位管理模块
  */
 
-// 保存
-export const save = (data) => {
-  return axios({
-    url: '/api/sys/post/save',
-    method: 'post',
-    data
-  })
-}
-// 删除
-export const batchDelete = (data) => {
-  return axios({
-    url: '/api/sys/post/deletes',
-    method: 'post',
-    data
-  })
-}
 // 分页查询
 export const findPage = (params) => {
   return axios({
@@ -28,6 +12,54 @@ export const findPage = (params) => {
     params
   })
 }
+
+/**
+ * 查看明细
+ * @param {*} id 岗位id
+ * @returns
+ */
+export const view = (id) => {
+  return axios({
+    url: '/api/sys/post/view/' + id,
+    method: 'get'
+  })
+}
+
+/**
+ * 新增
+ * @param {*} data
+ * @returns
+ */
+export const save = (data) => {
+  return axios({
+    url: '/api/sys/post/save',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 修改
+ * @param {*} data
+ * @returns
+ */
+export const update = (data) => {
+  return axios({
+    url: '/api/sys/post/update',
+    method: 'post',
+    data
+  })
+}
+
+// 删除
+export const batchDelete = (data) => {
+  return axios({
+    url: '/api/sys/post/deletes',
+    method: 'post',
+    data
+  })
+}
+
 // 上下移
 export const postMove = (params) => {
   return axios({
@@ -50,9 +82,9 @@ export const findAll = (params) => {
  * @param params
  * @returns {*|Promise|Promise<any>}
  */
-export const getMaxSort = (params) => {
+export const getMaxSortNum = (params) => {
   return axios({
-    url: '/api/sys/post/getMaxSort',
+    url: '/api/sys/post/getMaxSortNum',
     method: 'get',
     params
   })
