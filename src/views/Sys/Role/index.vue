@@ -30,12 +30,13 @@
                   :parent-vue="_self"
                   :filters="filters"
                   :change="findPage"
+                  :prop="{id: 'orgId', name: 'orgName'}"
                   url="/api/sys/org/getOrgTree"
                   placeholder="请选择所属机构"
                   name="orgId"
-                  prop="{&quot;id&quot;:&quot;orgId&quot;, &quot;name&quot;:&quot;orgName&quot;}"
                   default-expanded-level="1"
                 />
+                <!-- prop="{&quot;id&quot;:&quot;orgId&quot;, &quot;name&quot;:&quot;orgName&quot;}" -->
               </el-form-item>
             </el-col>
             <el-col :span="2">

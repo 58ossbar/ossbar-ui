@@ -37,9 +37,18 @@
 </template>
 <!--
   示例
-      <cb-tree :parentVue="this._self" url='/api/sys/role/orgTree' name="orgId"  prop='{"id":"orgId", "name":"orgName"}' :dataForm="dataForm"
-      :change="findPage" placeholder="请选择所属院校" isMult="true"
-      :disabled="true"></cb-tree>
+      作为单选查询条件时使用，如果要多选，加上isMult="true"
+      <cb-tree
+        :parent-vue="_self"
+        :filters="filters"
+        :change="findPage"
+        :prop="{id: 'orgId', name: 'orgName'}"
+        url="/api/sys/org/getOrgTree"
+        placeholder="请选择所属机构"
+        name="orgId"
+        default-expanded-level="1"
+      />
+
       注意
       url：[String]，获取树数据的接口地址：数据格式不需要children,只需要告诉父子关系的字段是哪个即可,必传参数
       method：[String]，url请求类型，默认get，可选参数
@@ -87,8 +96,9 @@ export default {
       type: String,
       default: ''
     },
+    // 配置树形数据的id和name
     prop: {
-      type: String,
+      type: [String, Object],
       default: ''
     },
     name: {
@@ -163,7 +173,7 @@ export default {
   },
   mounted() {
     // 设置返回数据中的哪个字段是nodeKey
-    this.propJSON = JSON.parse(this.prop)
+    this.propJSON = typeof this.prop === 'string' ? JSON.parse(this.prop) : this.prop
     this.nodeKey = this.propJSON.id || 'id'
     // 查询树节点数据
     this.queryTree(this.params ? JSON.parse(this.params) : {})
@@ -342,7 +352,7 @@ export default {
         params: (this.method === 'post' || this.method === 'POST') ? {} : queryData,
         data: (this.method === 'get' || this.method === 'GET') ? {} : queryData
       }).then(res => {
-        const prop = JSON.parse(this.prop)
+        const prop = typeof this.prop === 'string' ? JSON.parse(this.prop) : this.prop
         const data = this.setDataProperties(prop.id || 'id', prop.name || 'name', res.data, prop.parentId || 'parentId')
         const treeData = this.convertTreeData(data)
         let obj = []
