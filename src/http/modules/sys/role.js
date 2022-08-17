@@ -21,11 +21,11 @@ export const batchDelete = (data) => {
   })
 }
 // 分页查询
-export const findPage = (data) => {
+export const findPage = (params) => {
   return axios({
-    url: '/role/findPage',
-    method: 'post',
-    data
+    url: '/api/sys/role/query',
+    method: 'get',
+    params
   })
 }
 // 查询全部

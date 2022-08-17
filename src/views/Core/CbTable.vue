@@ -249,8 +249,6 @@ export default {
       type: Boolean,
       default: false
     },
-    // 是否开启switch开关
-    isShow: { type: Boolean, default: false },
     // switch 打开时的值
     activeValue: { type: String, default: '1' },
     // switch 关闭时的值

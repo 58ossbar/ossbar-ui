@@ -1,44 +1,58 @@
 <template>
-  <div>
-    <el-container class="page-container scrollAllY ">
+  <div class="page-container" >
+    <el-container class="page-container scrollAllY">
       <el-header class="box_shadows bgcolor  scrollRightYDictMenu " style="height: auto;">
-        <!-- 工具栏 -->
-        <el-form ref="queryForm" :inline="true" :model="filters" :size="size" class="queryForm" label-width="100px" label-position="right">
+        <el-form ref="queryForm" :inline="true" :model="filters" :size="size" class="queryForm" label-width="100px">
           <el-row class="elCollapseDict">
             <el-col :span="2">
               <el-form-item class="dictInputQueryLabelWidth">
-                <span>岗位类型</span>
+                <span>角色名称</span>
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item class="dictInputQueryWidth textAlign">
-                <cb-dict
-                  :parent-vue="_self"
-                  :change="findPage"
-                  :filters="filters"
-                  placeholder="请选择"
-                  name="postType"
-                  dict="sex"
-                  type="select"
-                  empty-label="全部"
+              <el-form-item class="dictInputQueryWidth ">
+                <el-input
+                  v-model="filters.roleName"
+                  placeholder="请输入角色名称"
+                  name="roleName"
+                  clearable
                 />
               </el-form-item>
             </el-col>
             <el-col :span="2">
               <el-form-item class="dictInputQueryLabelWidth">
-                <span>岗位名称</span>
+                <span>所属机构</span>
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item class="dictInputQueryWidth textAlign">
-                <el-input v-model="filters.postName" maxlength="50" type="text" placeholder="岗位名称" clearable/>
+              <el-form-item class="dictInputQueryWidth ">
+                <cb-tree
+                  :parent-vue="_self"
+                  :filters="filters"
+                  :change="findPage"
+                  url="/api/sys/org/getOrgTree"
+                  placeholder="请选择所属机构"
+                  name="orgId"
+                  prop="{&quot;id&quot;:&quot;orgId&quot;, &quot;name&quot;:&quot;orgName&quot;}"
+                  default-expanded-level="1"
+                />
               </el-form-item>
             </el-col>
-          </el-row>
-          <el-row class="elDeptFormButton dictQueryCenterButton">
-            <el-col :span="24">
-              <cb-button :loading="loadingQuery" :label="$t('action.search')" icon="fa fa-search" perms="sys:tsyspost:query" type="primary" @click="findPage()"/>
-              <cb-button :label="$t('action.add')" icon="fa fa-plus" type="primary" perms="sys:tsyspost:add" @click="handleAdd" />
+            <el-col :span="2">
+              <el-form-item class="dictInputQueryLabelWidth">
+                <span>角色状态</span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item class="dictInputQueryWidth ">
+                <el-select v-model="filters.status" clearable placeholder="请选择角色状态" style="width: 100%" @clear="findPage()" @change="findPage">
+                  <el-option
+                    v-for="item in optionsForStatus"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"/>
+                </el-select>
+              </el-form-item>
             </el-col>
           </el-row>
         </el-form>
@@ -51,38 +65,34 @@
           :columns="columns"
           :btn-columns="btnColumns"
           perms-batch-delete="sys:tsyspost:add"
-          row-key="postId"
+          row-key="roleId"
           @findPage="findPage"
-          @toggleRowSelection="toggleRowSelection"
-          @selectionChange="selectionChange"
-          @handleEdit="handleEdit"
           @handleBatchDelete="handleBatchDelete"/>
       </el-main>
     </el-container>
-    <save-form ref="saveForm" @ok="handleOk" />
   </div>
 </template>
-
 <script>
 import CbTable from '@/views/Core/CbTable'
 import CbButton from '@/views/Core/CbButton'
-import SaveForm from './SaveForm.vue'
 export default {
   components: {
     CbTable,
-    CbButton,
-    SaveForm
+    CbButton
   },
   data() {
     return {
-      size: 'small',
+      size: 'mini',
       filters: {
-        postType: '',
-        postName: ''
+        // 角色名称
+        roleName: '',
+        // 角色状态
+        status: ''
       },
       loadingQuery: false,
       loading: false,
       pageRequest: {},
+      // 表格数据
       pageResult: {},
       columns: [
         { prop: 'postType', label: '岗位类型', minWidth: 60 },
@@ -99,20 +109,22 @@ export default {
         { icon: 'fa fa-long-arrow-up', label: '上移', perms: 'book:tevglbookmajor:content', callback: 'handleMoveUp', moveType: 'moveUp', title: '修改排序号' },
         { icon: 'fa fa-long-arrow-down', label: '下移', perms: 'pkg:tevglpkginfo:changePackage', callback: 'handleMoveDown', moveType: 'moveDown', title: '修改排序号' },
         { icon: 'fa fa-trash', label: '删除', perms: 'book:tevglbookmajor:remove', callback: 'handleDelete' }
-      ]
+      ],
+      optionsForStatus: [{ value: '1', label: '正常' }, { value: '0', label: '禁用' }]
     }
   },
   methods: {
-    findPage(data) {
-      this.loadingQuery = true
+    findPage: function(data) {
       if (data && data !== null) {
         this.pageRequest = data.pageRequest
       } else {
         this.pageRequest.pageNum = 1
       }
+      // 当前页
       this.filters.page = this.pageRequest.pageNum
+      // 每页显示数
       this.filters.limit = this.pageRequest.pageSize
-      this.$api.post.findPage(this.filters).then(res => {
+      this.$api.role.findPage(this.filters).then(res => {
         this.pageResult = res.data
         this.loadingQuery = false
       }).then(data != null ? data.callback : '')
@@ -149,59 +161,7 @@ export default {
       }).catch(() => {
         this.$message({ type: 'info', message: '删除未成功' })
       })
-    },
-    handleMoveUp(row, index) {
-      const commitData = {
-        currPostId: row.postId,
-        targetPostId: this.pageResult.list[index - 1].postId
-      }
-      this.$confirm('确认上移选中记录吗？', '提示', {
-        type: 'warning',
-        closeOnClickModal: false
-      }).then(() => {
-        this.$api.post.postMove(commitData).then(res => {
-          if (res.code === 0) {
-            this.$message({ message: '上移成功', type: 'success' })
-            this.findPage()
-          } else {
-            this.$message.error(res.msg)
-          }
-        }).catch(() => {
-          // this.$message({ type: 'info', message: this.global.interfaceFailMessage })
-          this.$message({ type: 'info', message: '接口调用失败' })
-        })
-      }).catch(() => {
-        this.$message({ type: 'info', message: '已取消上移' })
-      })
-    },
-    handleMoveDown(row, index) {
-      const commitData = {
-        currPostId: row.postId,
-        targetPostId: this.pageResult.list[index + 1].postId
-      }
-      this.$confirm('确认下移选中记录吗？', '提示', {
-        type: 'warning',
-        closeOnClickModal: false
-      }).then(() => {
-        this.$api.post.postMove(commitData).then(res => {
-          if (res.code === 0) {
-            this.$message({ message: '下移成功', type: 'success' })
-            this.findPage()
-          } else {
-            this.$message.error(res.msg)
-          }
-        }).catch(() => {
-          // this.$message({ type: 'info', message: this.global.interfaceFailMessage })
-          this.$message({ type: 'info', message: '接口调用失败' })
-        })
-      }).catch(() => {
-        this.$message({ type: 'info', message: '已取消下移' })
-      })
     }
   }
 }
 </script>
-
-<style>
-
-</style>
