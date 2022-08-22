@@ -21,9 +21,9 @@ export const batchDelete = (data) => {
   })
 }
 // 查询机构树
-export const findDeptTree = () => {
+export const getOrgTree = () => {
   return axios({
-    url: '/dept/findTree',
+    url: '/api/sys/org/getOrgTree',
     method: 'get'
   })
 }

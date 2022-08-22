@@ -81,7 +81,6 @@ export default {
         postName: ''
       },
       loadingQuery: false,
-      loading: false,
       pageRequest: {},
       pageResult: {},
       columns: [

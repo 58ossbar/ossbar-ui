@@ -56,6 +56,13 @@
               </el-form-item>
             </el-col>
           </el-row>
+          <el-row class="elDeptFormButton dictQueryCenterButton">
+            <el-col :span="24">
+              <cb-button :label="$t('action.search')" :loading="loadingQuery" icon="fa fa-search" perms="sys:role:query" type="primary" @click="findPage()"/>
+              <cb-button :label="$t('action.add')" icon="fa fa-plus" perms="sys:role:add" type="primary" @click="handleAdd" />
+              <cb-button :label="$t('action.assignUsers')" icon="fa fa-user-o" perms="sys:role:setUser" type="primary" @click="handleAssignUsers" />
+            </el-col>
+          </el-row>
         </el-form>
       </el-header>
       <!--表格内容栏-->
@@ -71,15 +78,19 @@
           @handleBatchDelete="handleBatchDelete"/>
       </el-main>
     </el-container>
+    <!-- 新增/修改页面 -->
+    <save-form ref="saveForm" @ok="handleOk" />
   </div>
 </template>
 <script>
 import CbTable from '@/views/Core/CbTable'
 import CbButton from '@/views/Core/CbButton'
+import SaveForm from './SaveForm.vue'
 export default {
   components: {
     CbTable,
-    CbButton
+    CbButton,
+    SaveForm
   },
   data() {
     return {
@@ -91,7 +102,6 @@ export default {
         status: ''
       },
       loadingQuery: false,
-      loading: false,
       pageRequest: {},
       // 表格数据
       pageResult: {},
@@ -162,7 +172,11 @@ export default {
       }).catch(() => {
         this.$message({ type: 'info', message: '删除未成功' })
       })
-    }
+    },
+    /**
+     * 分配用户
+     */
+    handleAssignUsers() {}
   }
 }
 </script>
