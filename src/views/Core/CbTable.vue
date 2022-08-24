@@ -288,14 +288,14 @@ export default {
       return scope.column.formatter ? scope.column.formatter(scope.row, scope.column, scope.row[prop]) : scope.row[prop]
     },
     // 操作栏按钮回调事件
-    handleClick: function(index, row, callback) {
+    handleClick: function(row, index, callback) {
       // 处理-表格行的选中效果
       // 先清除选中效果
       this.$refs.table.clearSelection()
       // 再重新选中当前选中的行
       this.$refs.table.toggleRowSelection(row)
       if (callback) {
-        this.parentVue[callback](index, row)
+        this.parentVue[callback](row, index)
       }
     },
     // 分页查询

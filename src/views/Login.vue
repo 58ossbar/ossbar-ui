@@ -190,6 +190,7 @@ export default {
                 this.info = res.data[i].settingValue
               }
               if (res.data[i].settingCode === 'cbLogo') {
+                // eslint-disable-next-line no-undef
                 $('.loginLogoStyle').attr('src', baseUrl + '/uploads/settings/' + res.data[i].settingValue)
               }
               if (res.data[i].settingCode === 'contactInfo') {
@@ -202,18 +203,25 @@ export default {
           }
         }
         if (this.imageUrlBack) {
+          // eslint-disable-next-line no-undef
           $('.center').css({ 'background': "url('" + this.imageUrlBack + "') no-repeat", 'background-size': '100% 100%' })
         } else {
+          // eslint-disable-next-line no-undef
           $('.center').css({ 'background-size': '100% 100%' })
         }
+        // eslint-disable-next-line no-undef
         $('.loginLogoStyle, .footer, .appNames').css({ 'display': 'block' })
       })
     },
     login() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
+          const userInfo = {
+            username: this.loginForm.account,
+            password: this.loginForm.password,
+            captcha: this.loginForm.captcha
+          }
           this.loading = true
-          const userInfo = { username: this.loginForm.account, password: this.loginForm.password, captcha: this.loginForm.captcha }
           this.$api.login.login(userInfo).then((res) => {
             this.loading = false
             if (res.code !== 0) {

@@ -47,7 +47,7 @@
             :data="menuIdListData"
             :props="{id: 'menuId', label: 'name'}"
             :default-expanded-keys="defaultExpandedKeysForMenuTree"
-            node-key="id"
+            node-key="menuId"
             show-checkbox
             highlight-current
             @check-change="getCheckedKeysForMenuTree"
@@ -79,9 +79,8 @@
             show-checkbox
             check-strictly
             accordion
-            node-key="id"
-            @node-click="handleSelectMenuTree"
-            @check="checkForSaveOfLeftOrgTree"/>
+            node-key="orgId"
+            @check="checkForSaveOrgTree"/>
         </el-form-item>
       </div>
     </el-form>
@@ -99,7 +98,7 @@ export default {
   data() {
     // 验证角色名称
     var validateRoleName = (rule, value, callback) => {
-      value = value.trim()
+      // value = value.trim()
       if (value == null || value === '' || value === undefined) {
         callback(new Error('角色名称不能为空'))
       } else if (value.length > 100) {
@@ -137,7 +136,7 @@ export default {
         // 菜单ID集
         menuIdList: [],
         // 用户id集
-        userIdList: ''
+        userIdList: []
       },
       // 表单校验规则
       dataRule: {
@@ -171,27 +170,63 @@ export default {
     }
   },
   mounted() {
+    // 渲染菜单树
+    this.findPerms()
+    // 渲染机构树
+    this.queryAddOrgTree()
   },
   methods: {
     handleAdd() {
       this.operation = true
       this.dialogVisible = true
+      this.resetFormDatas()
       if (this.$refs['dataForm']) {
         this.$refs['dataForm'].clearValidate()
       }
       this.findPerms()
+      if (this.dataForm.dataScope === '5') {
+        this.queryAddOrgTree()
+      } else {
+        this.orgTreeData = []
+      }
+      // 若先修改，在新增，则需要清空被选中的节点
+      if (this.$refs.menuTree) {
+        this.$refs.menuTree.setCheckedNodes([])
+      }
       // 光标聚焦
       this.$nextTick(() => {
         this.$refs.dataFormRoleName.focus()
       })
     },
     handleEdit(row) {
+      // 标识为修改
       this.operation = false
+      // 打开界面
       this.dialogVisible = true
-      this.$api.post.view(row.postId).then(res => {
+      // 其它业务操作
+      if (row.dataScope === '5') {
+        this.queryAddOrgTree()
+      } else {
+        this.orgTreeData = []
+      }
+      this.$api.role.view(row.roleId).then(res => {
         if (res.code === 0) {
           // 赋值
           this.dataForm = Object.assign({}, res.data)
+          // 处理菜单树
+          if (res.data.menuIdList != null && res.data.menuIdList.length > 0) {
+            // 默认先赋值菜单ID集和机构ID集
+            this.dataForm.menuIdList = res.data.menuIdList
+            this.dataForm.orgIdList = res.data.orgIdList
+            for (var i = 0; i < res.data.menuIdList.length; i++) {
+              // 通过setChecked设置节点选中
+              this.$refs.menuTree.setChecked(res.data.menuIdList[i], true, false)
+            }
+          }
+          // 回显机构树数据，设置节点选中
+          if (res.data.dataScope === '5') {
+            this.$refs.orgTree.setCheckedKeys(res.data.orgIdList)
+          }
         }
       })
     },
@@ -213,7 +248,7 @@ export default {
     },
     save(continueFlag) {
       const submitData = Object.assign({}, this.dataForm)
-      this.$api.post.save(submitData).then((res) => {
+      this.$api.role.save(submitData).then((res) => {
         this.loading = false
         if (res.code === 0) {
           this.$message.success(res.msg)
@@ -232,7 +267,7 @@ export default {
     },
     update() {
       const submitData = Object.assign({}, this.dataForm)
-      this.$api.post.update(submitData).then((res) => {
+      this.$api.role.update(submitData).then((res) => {
         this.loading = false
         if (res.code === 0) {
           this.$message.success(res.msg)
@@ -253,16 +288,26 @@ export default {
     },
     resetFormDatas() {
       this.dataForm = {
-        // 岗位id
-        postId: null,
-        // 岗位类型
-        postType: '',
-        // 岗位名称
-        postName: '',
-        // 排序号
-        sort: '',
+        // 角色id
+        roleId: null,
+        // 角色名称
+        roleName: '',
+        // 所属机构
+        orgId: '',
+        // 数据范围
+        dataScope: '',
         // 备注
-        remark: ''
+        remark: '',
+        // 角色状态：1启用、0禁用
+        status: '1',
+        // 角色类型：公有、私有
+        roleType: '',
+        // 所属机构集
+        orgIdList: [],
+        // 菜单ID集
+        menuIdList: [],
+        // 用户id集
+        userIdList: []
       }
     },
     toValidateField(fieldName) {
@@ -282,7 +327,14 @@ export default {
       if (!value) return true
       return data.name.indexOf(value) !== -1
     },
-    getCheckedKeysForMenuTree() {},
+    getCheckedKeysForMenuTree(data, isChecked) {
+      // 返回当前选中节点得key(包含子节点的)
+      var a = this.$refs.menuTree.getCheckedKeys()
+      // 返回目前半选中的节点的 key 所组成的数组（即父节点的key）
+      var b = this.$refs.menuTree.getHalfCheckedKeys()
+      var c = a.concat(b)
+      this.dataForm.menuIdList = c
+    },
     // 数据范围的事件，当选中【按明细设置】出现机构树
     queryScope: function() {
       if (this.dataForm.dataScope === '5') {
@@ -315,9 +367,8 @@ export default {
       console.log(data)
       return data.orgName.indexOf(value) !== -1
     },
-    handleSelectMenuTree() {},
     // 新增或修改界面中左侧机构树，当复选框被点击的时候触发 args返回四个参数
-    checkForSaveOfLeftOrgTree: function(data, args) {
+    checkForSaveOrgTree: function(data, args) {
       this.dataForm.orgIdList = args.checkedKeys // 赋值机构ID集
     }
   }

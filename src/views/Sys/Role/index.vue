@@ -106,14 +106,10 @@ export default {
       // 表格数据
       pageResult: {},
       columns: [
-        { prop: 'postType', label: '岗位类型', minWidth: 60 },
-        { prop: 'postName', label: '岗位名称', minWidth: 60 },
-        { prop: 'sort', label: '排序号', minWidth: 60 },
-        { prop: 'remark', label: '岗位描述', minWidth: 80 },
-        { prop: 'createUserId', label: '创建人', minWidth: 70 },
+        { prop: 'roleName', label: '角色名称', minWidth: 120 },
+        { prop: 'orgId', label: '所属机构', minWidth: 120 },
         { prop: 'createTime', label: '创建时间', minWidth: 90 },
-        { prop: 'updateUserId', label: '修改人', minWidth: 70 },
-        { prop: 'updateTime', label: '修改时间', minWidth: 90 }
+        { prop: 'remark', label: '描述', minWidth: 80 }
       ],
       btnColumns: [
         { icon: 'fa fa-edit', label: '修改', perms: 'book:tevglbookmajor:edit', callback: 'handleEdit' },
@@ -149,12 +145,14 @@ export default {
     handleOk(data) {
       this.findPage()
     },
-    selectionChange() {},
-    toggleRowSelection() {},
     handleDelete(row) {
-      this.handleBatchDelete([row.postId])
+      this.handleBatchDelete([row.roleId])
     },
     handleBatchDelete(ids) {
+      console.log(ids)
+      if (!ids || !ids.length) {
+        return false
+      }
       this.$confirm('确认删除选中记录吗？', '提示', {
         type: 'warning',
         closeOnClickModal: false
