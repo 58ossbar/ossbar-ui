@@ -179,11 +179,12 @@ export default {
     handleAdd() {
       this.operation = true
       this.dialogVisible = true
+      // 重置表单数据
       this.resetFormDatas()
+      // 清空验证
       if (this.$refs['dataForm']) {
         this.$refs['dataForm'].clearValidate()
       }
-      this.findPerms()
       if (this.dataForm.dataScope === '5') {
         this.queryAddOrgTree()
       } else {
@@ -203,6 +204,10 @@ export default {
       this.operation = false
       // 打开界面
       this.dialogVisible = true
+      // 清空验证
+      if (this.$refs['dataForm']) {
+        this.$refs['dataForm'].clearValidate()
+      }
       // 其它业务操作
       if (row.dataScope === '5') {
         this.queryAddOrgTree()

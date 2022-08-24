@@ -45,7 +45,7 @@ export const update = (data) => {
 // 删除
 export const batchDelete = (data) => {
   return axios({
-    url: '/api/sys/role/delete',
+    url: '/api/sys/role/deletes',
     method: 'post',
     data
   })

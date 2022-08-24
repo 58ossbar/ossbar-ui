@@ -149,7 +149,6 @@ export default {
       this.handleBatchDelete([row.roleId])
     },
     handleBatchDelete(ids) {
-      console.log(ids)
       if (!ids || !ids.length) {
         return false
       }
@@ -157,7 +156,7 @@ export default {
         type: 'warning',
         closeOnClickModal: false
       }).then(() => {
-        this.$api.post.batchDelete(ids).then(res => {
+        this.$api.role.batchDelete(ids).then(res => {
           if (res.code !== 0) {
             this.$message.error(res.msg)
           } else {
