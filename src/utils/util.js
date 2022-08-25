@@ -33,12 +33,17 @@ export function convertTreeData(arr, idKey = 'id', parentIdKey = 'parentId') {
 /**
  * 处理图片地址
  * @param {*} str
+ * @param {*} needDefaultHead 布尔值，为true返回默认头像
  * @returns 示例结果：
  * http://thirdqq.qlogo.cn/g?b=oidb&k=Rhqd4feUicVicFSp07uO637g&s=40&t=1557039707
  * https://frp.creatorblue.com/console/uploads/teacher-img/67fcfbaea3d4476187e2e4279cea5e24.jpeg
  */
-export function handleImagePath(str) {
+export function handleImagePath(str, needDefaultHead = false) {
   if (!str) {
+    // 如果没有图片，需要返回图片的话
+    if (needDefaultHead) {
+      str = require('@/assets/user.png')
+    }
     return str
   }
   // 如果是网络头像，不需要额外拼接

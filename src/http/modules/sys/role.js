@@ -74,3 +74,25 @@ export const saveRoleMenus = (data) => {
     data
   })
 }
+
+/**
+ * 获取用于回显用户的数据
+ * @param {*} data
+ * @returns
+ */
+export const setUser = (data) => {
+  return axios({
+    url: '/api/sys/role/setUser',
+    method: 'post',
+    data
+  })
+}
+
+// 分配用户---保存
+export const saveRoleUser = (data) => {
+  return axios({
+    url: '/api/sys/role/saveRoleUser',
+    method: 'post',
+    data
+  })
+}

@@ -21,11 +21,11 @@ export const batchDelete = (data) => {
   })
 }
 // 分页查询
-export const findPage = (data) => {
+export const findPage = (params) => {
   return axios({
-    url: '/user/findPage',
-    method: 'post',
-    data
+    url: '/api/sys/user/findPage',
+    method: 'get',
+    params
   })
 }
 // 查找用户的菜单权限标识集合

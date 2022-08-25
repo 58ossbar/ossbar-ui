@@ -369,7 +369,6 @@ export default {
     },
     filterNodeOrg(value, data) {
       if (!value) return true
-      console.log(data)
       return data.orgName.indexOf(value) !== -1
     },
     // 新增或修改界面中左侧机构树，当复选框被点击的时候触发 args返回四个参数

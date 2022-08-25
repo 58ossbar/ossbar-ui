@@ -46,7 +46,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item class="dictInputQueryWidth ">
-                <el-select v-model="filters.status" clearable placeholder="请选择角色状态" style="width: 100%" @clear="findPage()" @change="findPage">
+                <el-select v-model="filters.status" clearable placeholder="请选择角色状态" style="width: 100%" @clear="findPage()" @change="findPage()">
                   <el-option
                     v-for="item in optionsForStatus"
                     :key="item.value"
@@ -68,6 +68,7 @@
       <!--表格内容栏-->
       <el-main class="box_shadows bgcolor  scrollRightYDictMenu tableDict marginBottom">
         <cb-table
+          ref="table"
           :parent-vue="_self"
           :data="pageResult"
           :columns="columns"
@@ -75,22 +76,26 @@
           perms-batch-delete="sys:tsyspost:add"
           row-key="roleId"
           @findPage="findPage"
+          @selectionChange="handleSelectionChange"
           @handleBatchDelete="handleBatchDelete"/>
       </el-main>
     </el-container>
     <!-- 新增/修改页面 -->
     <save-form ref="saveForm" @ok="handleOk" />
+    <AssignUser ref="assignUser" />
   </div>
 </template>
 <script>
 import CbTable from '@/views/Core/CbTable'
 import CbButton from '@/views/Core/CbButton'
 import SaveForm from './SaveForm.vue'
+import AssignUser from './AssignUser.vue'
 export default {
   components: {
     CbTable,
     CbButton,
-    SaveForm
+    SaveForm,
+    AssignUser
   },
   data() {
     return {
@@ -112,11 +117,11 @@ export default {
         { prop: 'remark', label: '描述', minWidth: 80 }
       ],
       btnColumns: [
-        { icon: 'fa fa-edit', label: '修改', perms: 'book:tevglbookmajor:edit', callback: 'handleEdit' },
-        { icon: 'fa fa-long-arrow-up', label: '上移', perms: 'book:tevglbookmajor:content', callback: 'handleMoveUp', moveType: 'moveUp', title: '修改排序号' },
-        { icon: 'fa fa-long-arrow-down', label: '下移', perms: 'pkg:tevglpkginfo:changePackage', callback: 'handleMoveDown', moveType: 'moveDown', title: '修改排序号' },
-        { icon: 'fa fa-trash', label: '删除', perms: 'book:tevglbookmajor:remove', callback: 'handleDelete' }
+        { icon: 'fa fa-edit', label: '修改', perms: 'sys:role:edit', callback: 'handleEdit' },
+        { icon: 'fa fa-trash', label: '删除', perms: 'sys:role:remove', callback: 'handleDelete' }
       ],
+      // 表格中被选中的列数据
+      selections: [],
       optionsForStatus: [{ value: '1', label: '正常' }, { value: '0', label: '禁用' }]
     }
   },
@@ -170,10 +175,24 @@ export default {
         this.$message({ type: 'info', message: '删除未成功' })
       })
     },
+    handleSelectionChange(rows) {
+      this.selections = rows
+    },
     /**
      * 分配用户
      */
-    handleAssignUsers() {}
+    handleAssignUsers() {
+      if (!this.selections || !this.selections.length) {
+        this.$message({ message: '请先在表格中，至少选择一个角色', type: 'warning' })
+        return false
+      }
+      if (this.selections.length > 8) {
+        this.$message({ message: '至多同时选择八条记录', type: 'warning' })
+        return false
+      }
+      // 去打开界面
+      this.$refs.assignUser.handleAssignUser(this.selections, this.$refs.table)
+    }
   }
 }
 </script>

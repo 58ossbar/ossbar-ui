@@ -384,7 +384,9 @@ export default {
     switchChange: function(e, index, data) {
       this.$emit('switchChange', { e: e, index: index, data: data })
     },
-
+    toggleRowSelection(row) {
+      this.$refs.table.toggleRowSelection(row)
+    },
     /**
      * 查看明细
      * @param index 下标
