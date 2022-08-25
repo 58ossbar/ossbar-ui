@@ -20,14 +20,14 @@ Vue.use(api)
 Vue.prototype.global = global
 
 /* 加载创蓝全局组件start */
-import CbDict from '@/components/cb-dict'
-import CbParam from '@/components/cb-param'
-import CbUpload from '@/components/cb-upload'
+import CbDict from '@/components/CbDict'
+import CbParam from '@/components/CbParam'
+import CbUpload from '@/components/CbUpload'
 // import CbEditor from '@/components/cb-editor'
-import CbTree from '@/components/cb-tree'
-import CbTreePanel from '@/components/cb-tree-panel'
-import CbTabels from '@/components/cb-tables'
-import CbAutoComplete from '@/components/cb-auto-complete'
+import CbTree from '@/components/CbTree'
+import CbTreePanel from '@/components/CbTreePanel'
+import CbTabels from '@/components/CbTables'
+import CbAutoComplete from '@/components/CbAutoComplete'
 const components = [
   CbDict,
   CbParam,
