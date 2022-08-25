@@ -7,7 +7,7 @@ import axios from '@/http/axios'
 // 保存
 export const save = (data) => {
   return axios({
-    url: '/user/save',
+    url: '/api/sys/user/save',
     method: 'post',
     data
   })
@@ -15,7 +15,7 @@ export const save = (data) => {
 // 删除
 export const batchDelete = (data) => {
   return axios({
-    url: '/user/delete',
+    url: '/api/sys/user/deletes',
     method: 'post',
     data
   })
@@ -34,5 +34,17 @@ export const findPermissions = (params) => {
     url: '/api/sys/user/findPermissions',
     method: 'get',
     params
+  })
+}
+
+/**
+ * 查看明细
+ * @param {*} id 岗位id
+ * @returns
+ */
+export const view = (id) => {
+  return axios({
+    url: '/api/sys/user/view/' + id,
+    method: 'get'
   })
 }

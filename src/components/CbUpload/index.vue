@@ -37,15 +37,69 @@
   默认支持新增、修改及表单校验，不需要额外做处理
  -->
 <script>
-import { baseUrl } from '@/utils/global'
+import { baseUrl, tokenKeyName } from '@/utils/global'
 import Cookies from 'js-cookie'
-import axios from '@/http/axios'
 
 export default {
   name: 'CbUpload', // 继承父组件中的id，name属性，拓展功能请在此配置
   components: {
   },
-  props: ['parentVue', 'url', 'placeholder', 'name', 'dataForm', 'type', 'width', 'height', 'errorRange'],
+  // props: ['parentVue', 'url', 'placeholder', 'name', 'dataForm', 'type', 'width', 'height', 'errorRange'],
+  props: {
+    // 传固定值_self，不能改变，表单校验时会用到，必传固定参数
+    parentVue: {
+      type: Object,
+      required: true
+    },
+    // 属性与JavaBean字段一致，必传
+    name: {
+      type: String,
+      required: true
+    },
+    // 上传服务接口地址(带http的完整路径)，可选参数
+    url: {
+      type: String,
+      required: false,
+      default: ''
+    },
+    // url未传时，type代表通用上传服务中的附件类型，默认值为：0，上传到通用默认目录，取值参考全局参数表：附件类型
+    type: {
+      type: String,
+      required: true,
+      default: '0'
+    },
+    dataForm: {
+      type: Object,
+      required: false,
+      default: () => {
+        return {}
+      }
+    },
+    // 提示语，可选参数，默认为：图片上传
+    placeholder: {
+      type: String,
+      required: false,
+      default: ''
+    },
+    // 限制图片上传的尺寸，宽
+    width: {
+      type: [String, Number],
+      required: false,
+      default: null
+    },
+    // 限制图片上传的尺寸，高
+    height: {
+      type: [String, Number],
+      required: false,
+      default: null
+    },
+    // 图片尺寸允许的误差范围
+    errorRange: {
+      type: [String, Number],
+      required: false,
+      default: null
+    }
+  },
   data() {
     return {
       uploadHeaders: {},
@@ -57,7 +111,7 @@ export default {
   },
   watch: {
     dataForm: function(n, o) {
-      if (n[this.name] && (n[this.name].indexOf('https') != -1 || n[this.name].indexOf('http') != -1)) {
+      if (n[this.name] && (n[this.name].indexOf('https') !== -1 || n[this.name].indexOf('http') !== -1)) {
         this.src = n[this.name]
         return false
       }
@@ -69,9 +123,9 @@ export default {
   },
   methods: {
     getUploadHeaders: function() {
-      var token = Cookies.get('token')
+      var token = Cookies.get(tokenKeyName)
       if (token) {
-        this.uploadHeaders.authorization = 'Bearer' + token
+        this.uploadHeaders.authorization = 'Bearer ' + token
       }
     },
     // 文件上传
@@ -86,11 +140,13 @@ export default {
         if (this.parentVue && this.dataForm) {
           // 当页面存在多个表单时，需要遍历找到各自对应的表单进行校验重置
           for (const ref in this.parentVue.$refs) {
-            if (this.parentVue.$refs[ref].model == this.dataForm) {
+            if (this.parentVue.$refs[ref].model === this.dataForm) {
               this.parentVue.$refs[ref].validateField(this.name)
             }
           }
         }
+      } else {
+        this.$message.error(res.msg)
       }
     },
     beforeAvatarUpload(file) {

@@ -89,3 +89,16 @@ export const getMaxSortNum = (params) => {
     params
   })
 }
+
+/**
+ * 无分页查询所有岗位
+ * @param {*} params
+ * @returns
+ */
+export const findPost = (params) => {
+  return axios({
+    url: '/api/sys/post/queryAll',
+    method: 'get',
+    params
+  })
+}

@@ -23,7 +23,7 @@
           </template>
           <div style="width: 49%;float:left;">
             <el-form-item label="登录名称" prop="username">
-              <el-input v-model="dataForm.username" auto-complete="off" autofocus type="text" maxlength="50"/>
+              <el-input v-model="dataForm.username" auto-complete="off" type="text" maxlength="50"/>
             </el-form-item>
             <el-form-item label="真实姓名" prop="userRealname">
               <el-input v-model="dataForm.userRealname" auto-complete="off" type="text" maxlength="50"/>
@@ -37,7 +37,7 @@
                 :data-form="dataForm"
                 :prop="{id: 'orgId', name: 'orgName'}"
                 url="/api/sys/org/getOrgTree"
-                placeholder="请选择所属机构"
+                placeholder=""
                 name="orgId"
                 default-expanded-level="1"
               />
@@ -64,7 +64,14 @@
           </div>
           <div style="width: 49%;float:left;">
             <el-form-item style="display: flex" prop="userImg">
-              头像上传
+              <cb-upload
+                :parent-vue="_self"
+                :data-form="dataForm"
+                type="2"
+                name="userimg"
+                placeholder=""
+                title="点击上传用户头像"
+              />
             </el-form-item>
             <el-form-item label="性别" prop="sex">
               <cb-dict
@@ -88,6 +95,68 @@
             </el-form-item>
           </div>
         </el-collapse-item>
+        <el-collapse-item name="2" style="width:99%;">
+          <template slot="title">
+            <el-button type="primary" class="collapseItemHr" />更多信息
+          </template>
+          <div style="width: 49%;float:left;">
+            <el-form-item label="身份证号" prop="userCard">
+              <el-input v-model="dataForm.userCard" auto-complete="off" maxlength="18"/>
+            </el-form-item>
+            <el-form-item label="邮政编码" prop="zip">
+              <el-input v-model="dataForm.zip" auto-complete="off" maxlength="10"/>
+            </el-form-item>
+            <el-form-item label="电子邮箱" prop="email">
+              <el-input v-model="dataForm.email" auto-complete="off" maxlength="100"/>
+            </el-form-item>
+          </div>
+          <div style="width: 49%;float:left;">
+            <el-form-item label="出生日期" prop="birthday">
+              <!-- <el-date-picker
+                v-model="dataForm.birthday"
+                style="width: 100%"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd"
+                type="date"
+                placeholder="选择日期"/> -->
+            </el-form-item>
+            <el-form-item label="所属民族" prop="nation">
+              <el-input v-model="dataForm.nation" auto-complete="off" maxlength="20"/>
+            </el-form-item>
+            <el-form-item label="所属岗位" prop="postIdList">
+              <el-select v-model="dataForm.postId" placeholder="请选择" style="width: 100%;" clearable>
+                <el-option
+                  v-for="item in postList"
+                  :key="item.postId"
+                  :label="item.postName"
+                  :value="item.postId"/>
+              </el-select>
+            </el-form-item>
+          </div>
+          <div style="width: 100%;float:left;">
+            <el-form-item label="所属副机构" prop="orgIdList" >
+              <el-cascader
+                :options="orgTreeData"
+                v-model="popupTreeOrgIdList"
+                :props="{ multiple: true, checkStrictly: true, value: 'orgId', label: 'orgName'}"
+                :show-all-levels="false"
+                style="width: 97%"
+                clearable
+                @change="getOrgIdList"/>
+            </el-form-item>
+          </div>
+          <div style="width: 100%;float:left;">
+            <el-form-item label="家庭住址" prop="nativePlace">
+              <el-input v-model="dataForm.nativePlace" style="width: 97%" auto-complete="off" maxlength="255"/>
+            </el-form-item>
+          </div>
+        </el-collapse-item>
+        <el-collapse-item name="3" style="width:99%;">
+          <template slot="title">
+            <el-button type="primary" class="collapseItemHr" />角色信息
+          </template>
+        </el-collapse-item>
+
       </el-collapse>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -170,29 +239,40 @@ export default {
       dialogVisible: false,
       // 表单数据
       dataForm: {
-        userId: '',
-        roleName: '',
-        showRoleName: [],
-        username: '',
-        userRealname: '',
-        parentId: 0,
-        password: '',
-        postIdList: [],
+        // 用户ID
+        userId: null,
+        // 登录账号，用户名
+        username: 'test18508480001',
+        // 用户真实姓名
+        userRealname: 'test18508480001',
+        // 手机号码
+        mobile: '18508480001',
+        // 所属机构
         orgId: '',
+        // 所属副机构
         orgIdList: [],
+        // 岗位
+        postIdList: [],
+        // 性别
         sex: '0',
+        // 头像
         userimg: '',
+        // 用户类型
         userType: '0',
+        // 状态
         status: '1',
-        userTheme: '',
+        // 身份证号
         userCard: '',
+        // 家庭住址
         nativePlace: '',
+        // 邮箱
         email: '',
+        // 邮政编码
         zip: '',
+        // 出生日期
         birthday: '',
-        nation: '',
-        mobile: '',
-        sortNum: 1
+        // 民族
+        nation: ''
       },
       // 表单校验规则
       dataRule: {
@@ -206,26 +286,32 @@ export default {
         sortNum: [{ required: true, message: '排序号码不能为空', trigger: 'blur' }]
       },
       // 折叠面板初始化：初识显示哪个面板
-      activeNames: ['1']
+      activeNames: ['1'],
+      // 所属副机构
+      orgTreeData: [],
+      popupTreeOrgIdList: [],
+      // 所属岗位
+      postList: []
     }
   },
+  mounted() {
+    this.queryPost()
+  },
   methods: {
-    handleAdd() {
+    handleAdd(orgTreeData) {
       this.operation = true
       this.dialogVisible = true
       if (this.$refs['dataForm']) {
         this.$refs['dataForm'].clearValidate()
       }
-      this.$api.post.getMaxSortNum().then(res => {
-        this.dataForm.sort = res.data
-      })
+      // 不重复调接口
+      this.orgTreeData = orgTreeData
     },
     handleEdit(row) {
       this.operation = false
       this.dialogVisible = true
-      this.$api.post.view(row.postId).then(res => {
+      this.$api.user.view(row.userId).then(res => {
         if (res.code === 0) {
-          // 赋值
           this.dataForm = Object.assign({}, res.data)
         }
       })
@@ -248,7 +334,7 @@ export default {
     },
     save(continueFlag) {
       const submitData = Object.assign({}, this.dataForm)
-      this.$api.post.save(submitData).then((res) => {
+      this.$api.user.save(submitData).then((res) => {
         this.loading = false
         if (res.code === 0) {
           this.$message.success(res.msg)
@@ -285,19 +371,57 @@ export default {
     handleClose() {
       this.dialogVisible = false
       this.resetFormDatas()
+      this.activeNames = ['1']
     },
     resetFormDatas() {
       this.dataForm = {
-        // 岗位id
-        postId: null,
-        // 岗位类型
-        postType: '',
-        // 岗位名称
-        postName: '',
-        // 排序号
-        sort: '',
-        // 备注
-        remark: ''
+        // 用户ID
+        userId: null,
+        // 登录账号，用户名
+        username: '',
+        // 用户真实姓名
+        userRealname: '',
+        // 手机号码
+        mobile: '',
+        // 所属机构
+        orgId: '',
+        // 所属副机构
+        orgIdList: [],
+        // 岗位
+        postIdList: [],
+        // 性别
+        sex: '0',
+        // 头像
+        userimg: '',
+        // 用户类型
+        userType: '0',
+        // 状态
+        status: '1',
+        // 身份证号
+        userCard: '',
+        // 家庭住址
+        nativePlace: '',
+        // 邮箱
+        email: '',
+        // 邮政编码
+        zip: '',
+        // 出生日期
+        birthday: '',
+        // 民族
+        nation: ''
+      }
+    },
+    queryPost() {
+      this.$api.post.findPost().then((res) => {
+        if (res.code === 0) {
+          this.postList = res.data
+        }
+      })
+    },
+    getOrgIdList: function(data) {
+      this.dataForm.orgIdList = []
+      for (let i = 0; i < data.length; i++) {
+        this.dataForm.orgIdList.push(data[i][data[i].length - 1])
       }
     }
   }

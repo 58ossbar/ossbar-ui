@@ -245,7 +245,7 @@ export default {
       }).then(data != null ? data.callback : '')
     },
     handleAdd() {
-      this.$refs.saveForm.handleAdd()
+      this.$refs.saveForm.handleAdd(this.dataLeftTree)
     },
     handleEdit(row) {
       this.$refs.saveForm.handleEdit(row)
