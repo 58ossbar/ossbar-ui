@@ -32,6 +32,14 @@
         empty-label="全部"
       />
       作为新增修改时的使用情况
+      <cb-dict
+        :parent-vue="_self"
+        :data-form="dataForm"
+        placeholder="请选择"
+        name="sex"
+        dict="sex"
+        type="select"
+      />
 
       注意
       parentVue：[Object]，传固定值this._self，不能改变，表单校验时会用到，必传固定参数

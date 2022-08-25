@@ -45,11 +45,9 @@
 </template>
 
 <script>
-// import $ from 'jq'
 export default {
   data() {
     var validateName = (rule, value, callback) => {
-      // value = $.trim(value)
       if (!value) {
         return callback(new Error('岗位名称不能为空'))
       } else {

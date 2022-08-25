@@ -54,6 +54,22 @@
             {{ formatterData(scope, column.prop) }}
           </span>
           <!--自定义列头像-->
+          <el-popover v-else-if="['el-image', 'image', 'img'].includes(column.dataType)" placement="right" title="" trigger="hover">
+            <img :src="formatterData(scope, column.prop)" style="max-width: 300px; max-height: 300px" >
+            <img
+              v-if="!column.type"
+              slot="reference"
+              :src="formatterData(scope, column.prop)"
+              style="width: 40px;height: 40px;display: block;border-radius: 50%"
+              @click="dataTypeClick($event, scope.$index, scope.row, column.callback)" >
+            <img
+              v-else-if="column.type == 2"
+              slot="reference"
+              :name="column.prop"
+              :title="scope.row[column.title]"
+              :src="formatterData(scope, column.prop)"
+              @click="dataTypeClick($event, scope.$index, scope.row, column.callback)" >
+          </el-popover>
           <!--自定义列tag标签-->
           <!--默认普通列-->
           <span v-else>
