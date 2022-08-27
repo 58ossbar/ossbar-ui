@@ -68,7 +68,7 @@
           <el-input v-model="dataForm.remark" auto-complete="off" placeholder=""/>
         </el-form-item>
         <el-form-item ref="myMenuIdList" prop="menuIdList" style="overflow:auto; height:400px;overflow-x:hidden;">
-          <el-input v-model="filterTextForOrg" style="margin: 0px 0px;" placeholder="输入关键字进行过滤" />
+          <el-input v-if="dataForm.dataScope === '5'" v-model="filterTextForOrg" style="margin: 0px 0px;" placeholder="输入关键字进行过滤" />
           <el-tree
             ref="orgTree"
             :props="{id: 'orgId', label: 'orgName'}"
@@ -292,6 +292,12 @@ export default {
       this.resetFormDatas()
     },
     resetFormDatas() {
+      if (this.$refs.menuTree) {
+        this.$refs.menuTree.setCheckedKeys([])
+      }
+      if (this.$refs.orgTree) {
+        this.$refs.orgTree.setCheckedKeys([])
+      }
       this.dataForm = {
         // 角色id
         roleId: null,
@@ -324,7 +330,6 @@ export default {
       this.$api.menu.queryPerms().then((res) => {
         const treeData = convertTreeData(res.data, 'menuId')
         this.menuIdListData = treeData
-        // this.defaultExpandedKeysForMenuTree = getDefaultExpandedKeys(treeData, 2)
       })
     },
     // 左侧菜单树的过滤

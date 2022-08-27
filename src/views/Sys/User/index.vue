@@ -21,7 +21,7 @@
           class="filter-tree"
           highlight-current
           accordion
-          node-key="id"
+          node-key="orgId"
           @node-click="handleSelectMenuTree"
         />
       </el-aside>
@@ -248,7 +248,7 @@ export default {
       this.$refs.saveForm.handleAdd(this.dataLeftTree)
     },
     handleEdit(row) {
-      this.$refs.saveForm.handleEdit(row)
+      this.$refs.saveForm.handleEdit(row, this.dataLeftTree)
     },
     handleOk(data) {
       this.findPage()

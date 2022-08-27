@@ -12,6 +12,15 @@ export const save = (data) => {
     data
   })
 }
+// 修改
+export const update = (data) => {
+  return axios({
+    url: '/api/sys/user/update',
+    method: 'post',
+    data
+  })
+}
+
 // 删除
 export const batchDelete = (data) => {
   return axios({

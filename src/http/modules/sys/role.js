@@ -54,7 +54,7 @@ export const batchDelete = (data) => {
 // 查询全部
 export const findAll = () => {
   return axios({
-    url: '/api/sys/role/findAll',
+    url: '/api/sys/role/queryAll',
     method: 'get'
   })
 }
