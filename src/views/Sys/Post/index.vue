@@ -50,7 +50,7 @@
           :data="pageResult"
           :columns="columns"
           :btn-columns="btnColumns"
-          perms-batch-delete="sys:tsyspost:add"
+          perms-batch-delete="sys:tsyspost:remove"
           row-key="postId"
           @findPage="findPage"
           @toggleRowSelection="toggleRowSelection"
@@ -94,10 +94,10 @@ export default {
         { prop: 'updateTime', label: '修改时间', minWidth: 90 }
       ],
       btnColumns: [
-        { icon: 'fa fa-edit', label: '修改', perms: 'book:tevglbookmajor:edit', callback: 'handleEdit' },
-        { icon: 'fa fa-long-arrow-up', label: '上移', perms: 'book:tevglbookmajor:content', callback: 'handleMoveUp', moveType: 'moveUp', title: '修改排序号' },
-        { icon: 'fa fa-long-arrow-down', label: '下移', perms: 'pkg:tevglpkginfo:changePackage', callback: 'handleMoveDown', moveType: 'moveDown', title: '修改排序号' },
-        { icon: 'fa fa-trash', label: '删除', perms: 'book:tevglbookmajor:remove', callback: 'handleDelete' }
+        { icon: 'fa fa-edit', label: '修改', perms: 'sys:tsyspost:edit', callback: 'handleEdit' },
+        { icon: 'fa fa-long-arrow-up', label: '上移', perms: 'sys:tsyspost:move', callback: 'handleMoveUp', moveType: 'moveUp', title: '修改排序号' },
+        { icon: 'fa fa-long-arrow-down', label: '下移', perms: 'sys:tsyspost:move', callback: 'handleMoveDown', moveType: 'moveDown', title: '修改排序号' },
+        { icon: 'fa fa-trash', label: '删除', perms: 'sys:tsyspost:remove', callback: 'handleDelete' }
       ]
     }
   },

@@ -101,7 +101,7 @@
               class="editButtonPost"
               @click="handleClick(scope.row, scope.$index, btnColumns[0].callback)"
             />
-            <el-dropdown ref="cbDropdown" :show-timeout="0" class="tabs-tools" trigger="click">
+            <el-dropdown v-if="hasPerms(btnColumns.map(item => item.perms))" ref="cbDropdown" :show-timeout="0" class="tabs-tools" trigger="click">
               <el-button ref="moreButton" size="mini" icon="fa fa-angle-down" type="primary" class="editButtonPost" >{{ $t('action.more') }}</el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-for="(btnColumn,index) in btnColumns" :key="btnColumn.label" class="widthAll paddingNone" style="height: auto;line-height: 20px;" >
@@ -178,7 +178,7 @@
 
 <script>
 import CbButton from '@/views/Core/CbButton'
-import { hasPermission } from '@/permission/index.js'
+import { hasPermissionList } from '@/permission/index.js'
 export default {
   name: 'CbTable',
   components: {
@@ -324,7 +324,7 @@ export default {
     },
     hasPerms: function(perms) {
       // 根据权限标识和外部指示状态进行权限判断
-      return hasPermission(perms) & !this.disabled
+      return hasPermissionList(perms) & !this.disabled
     },
     // 选择切换
     selectionChange: function(selections) {
@@ -399,6 +399,9 @@ export default {
     // switch 状态发生变化时的回调函数
     switchChange: function(e, index, data) {
       this.$emit('switchChange', { e: e, index: index, data: data })
+    },
+    clearSelection() {
+      this.$refs.table.clearSelection()
     },
     toggleRowSelection(row) {
       this.$refs.table.toggleRowSelection(row)

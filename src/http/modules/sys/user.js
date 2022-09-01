@@ -57,3 +57,29 @@ export const view = (id) => {
     method: 'get'
   })
 }
+
+/**
+ * 清空权限
+ * @param {*} data
+ * @returns
+ */
+export const clearPermissions = (data) => {
+  return axios({
+    url: '/api/sys/user/clearPermissions',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 重置密码
+ * @param {*} data
+ * @returns
+ */
+export const resetPassword = (data) => {
+  return axios({
+    url: '/api/sys/user/resetPassword',
+    method: 'post',
+    data
+  })
+}

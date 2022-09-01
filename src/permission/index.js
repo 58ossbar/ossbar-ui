@@ -19,3 +19,19 @@ export function hasPermission(perms) {
   return hasPermission
 }
 
+export function hasPermissionList(permList) {
+  let hasPermission = false
+  const permissions = store.state.user.perms
+  if (!permissions || !permissions.length) {
+    return false
+  }
+  for (let i = 0, len = permissions.length; i < len; i++) {
+    for (let j = 0, len2 = permList.length; j < len2; j++) {
+      if (permissions[i] === permList[j]) {
+        hasPermission = true
+        break
+      }
+    }
+  }
+  return hasPermission
+}

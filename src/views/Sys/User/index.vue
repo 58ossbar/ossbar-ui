@@ -125,7 +125,9 @@
               <el-col :span="24">
                 <cb-button :label="$t('action.search')" :loading="loadingQuery" icon="fa fa-search" perms="sys:role:query" type="primary" @click="findPage()"/>
                 <cb-button :label="$t('action.add')" icon="fa fa-plus" perms="sys:role:add" type="primary" @click="handleAdd" />
-                <cb-button :label="$t('action.assignUsers')" icon="fa fa-user-o" perms="sys:role:setUser" type="primary" @click="handleAssignUsers" />
+                <cb-button :label="$t('action.assignRoles')" icon="fa fa-wheelchair" perms="sys:tsysuserinfo:role" type="primary" @click="handleAssignRoles"/>
+                <cb-button :label="$t('action.clearanceAuthority')" icon="fa fa-handshake-o" perms="sys:tsysuserinfo:clear" type="primary" @click="clearPerms()"/>
+                <cb-button :label="$t('action.resetPassword')" icon="fa fa-moon-o" perms="sys:tsysuserinfo:reset" type="primary" @click="resetPassword()" />
               </el-col>
             </el-row>
           </el-form>
@@ -151,6 +153,8 @@
     </el-container>
     <!-- 新增/修改用户界面 -->
     <SaveForm ref="saveForm" @ok="handleOk" />
+    <!-- 分配角色界面 -->
+    <AssignRole ref="assignRole" />
   </div>
 </template>
 <script>
@@ -158,15 +162,17 @@ import { convertTreeData, handleImagePath } from '@/utils/util'
 import CbTable from '@/views/Core/CbTable'
 import CbButton from '@/views/Core/CbButton'
 import SaveForm from './SaveForm.vue'
+import AssignRole from './AssignRole.vue'
 export default {
   components: {
     CbTable,
     CbButton,
-    SaveForm
+    SaveForm,
+    AssignRole
   },
   data() {
     return {
-      size: 'mini',
+      size: 'small',
       filters: {
         // 角色名称
         roleName: '',
@@ -282,19 +288,68 @@ export default {
       this.selections = rows
     },
     /**
-     * 分配用户
+     * 分配角色
      */
-    handleAssignUsers() {
+    handleAssignRoles() {
       if (!this.selections || !this.selections.length) {
-        this.$message({ message: '请先在表格中，至少选择一个角色', type: 'warning' })
+        this.$message({ message: '请先在表格中，至少选择一个用户', type: 'warning' })
         return false
       }
-      if (this.selections.length > 8) {
-        this.$message({ message: '至多同时选择八条记录', type: 'warning' })
-        return false
+      let count = 0
+      for (let i = 0; i < this.selections.length; i++) {
+        if (Number(this.selections[i].status) === 1) {
+          count++
+        }
+      }
+      if (count !== this.selections.length) {
+        this.$message({ message: '不能给禁用的用户分配角色!', type: 'warning' })
       }
       // 去打开界面
-      this.$refs.assignUser.handleAssignUser(this.selections, this.$refs.table)
+      this.$refs.assignRole.handleAssignRole(this.selections, this.$refs.table)
+    },
+    /**
+     * 清空权限
+     */
+    clearPerms: function() {
+      if (this.selections.length < 1) {
+        this.$message({ message: '请先在表格勾选要清空权限的用户', type: 'warning' })
+        return false
+      }
+      this.$confirm('确认清空权限吗？', '提示', {}).then(() => {
+        const commitArray = this.selections.map(item => item.userId)
+        this.$api.user.clearPermissions(commitArray).then((res) => {
+          if (res.code === 0) {
+            this.$message.success(res.msg)
+            this.$refs.table.clearSelection()
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+      })
+    },
+    /**
+     * 重置密码
+     */
+    resetPassword: function() {
+      if (this.selections.length < 1) {
+        this.$message({ message: '请先在表格勾选要重置密码的用户', type: 'warning' })
+        return false
+      }
+      if (this.selections.length > 20) {
+        this.$message({ message: '一次性最多只能选择20个用户', type: 'warning' })
+        return false
+      }
+      this.$confirm('确认重置密码吗？', '提示', {}).then(() => {
+        const commitArray = this.selections.map(item => item.userId)
+        this.$api.user.resetPassword(commitArray).then((res) => {
+          if (res.code === 0) {
+            this.$message.success(res.msg)
+            this.$refs.table.clearSelection()
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+      })
     }
   }
 }

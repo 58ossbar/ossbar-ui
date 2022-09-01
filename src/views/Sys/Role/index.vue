@@ -73,7 +73,7 @@
           :data="pageResult"
           :columns="columns"
           :btn-columns="btnColumns"
-          perms-batch-delete="sys:tsyspost:add"
+          perms-batch-delete="sys:role:remove"
           row-key="roleId"
           @findPage="findPage"
           @selectionChange="handleSelectionChange"
@@ -99,7 +99,7 @@ export default {
   },
   data() {
     return {
-      size: 'mini',
+      size: 'small',
       filters: {
         // 角色名称
         roleName: '',

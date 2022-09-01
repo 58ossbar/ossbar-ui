@@ -15,32 +15,39 @@ import { hasPermission } from '@/permission/index.js'
 export default {
   name: 'CbButton',
   props: {
-    label: { // 按钮显示文本
+    // 按钮显示文本
+    label: {
       type: String,
       default: '' /* Button*/
     },
-    icon: { // 按钮显示图标
+    // 按钮显示图标
+    icon: {
       type: String,
       default: ''
     },
-    size: { // 按钮尺寸
+    // 按钮尺寸
+    size: {
       type: String,
       default: 'mini'
     },
-    type: { // 按钮类型
+    // 按钮类型
+    type: {
       type: String,
       default: null
     },
-    loading: { // 按钮加载标识
+    // 按钮加载标识
+    loading: {
       type: Boolean,
       default: false
     },
-    disabled: { // 按钮是否禁用
+    // 按钮是否禁用
+    disabled: {
       type: Boolean,
       default: false
     },
-    perms: { // 按钮权限标识，外部使用者传入
-      type: String,
+    // 按钮权限标识，外部使用者传入
+    perms: {
+      type: [String, Array],
       default: null
     }
   },
