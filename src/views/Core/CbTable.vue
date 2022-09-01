@@ -442,6 +442,6 @@ export default {
 
 <style scoped>
   .el-button+.el-button {
-    margin-left: 0px;
+    margin-left: 5px;
   }
 </style>
