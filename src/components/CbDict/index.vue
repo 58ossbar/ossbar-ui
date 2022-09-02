@@ -112,10 +112,7 @@ export default {
   },
   methods: {
     getDict: function() {
-      const queryData = {}
-      queryData.sidx = 'SORT_NUM'
-      queryData.order = 'asc'
-      queryData.dictType = this.dict
+      const queryData = { dictType: this.dict }
       axios({
         url: '/api/sys/dict/cbdict',
         method: 'get',

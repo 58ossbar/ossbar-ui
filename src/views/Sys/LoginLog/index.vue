@@ -74,7 +74,6 @@
           <el-row class="elDeptFormButton dictQueryCenterButton">
             <el-col :span="24">
               <cb-button :label="$t('action.search')" :loading="loadingQuery" icon="fa fa-search" perms="sys:role:query" type="primary" @click="findPage()"/>
-              <cb-button :label="$t('action.add')" icon="fa fa-plus" perms="sys:role:add" type="primary" @click="handleAdd" />
             </el-col>
           </el-row>
         </el-form>

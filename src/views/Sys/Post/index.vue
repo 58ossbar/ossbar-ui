@@ -12,13 +12,13 @@
             </el-col>
             <el-col :span="6">
               <el-form-item class="dictInputQueryWidth textAlign">
-                <cb-dict
+                <cb-param
                   :parent-vue="_self"
                   :change="findPage"
                   :filters="filters"
                   placeholder="请选择"
                   name="postType"
-                  dict="sex"
+                  param="postType"
                   type="select"
                   empty-label="全部"
                 />

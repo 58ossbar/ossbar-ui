@@ -17,12 +17,12 @@
       @keyup.enter.native="submitForm()"
     >
       <el-form-item label="岗位类型" prop="postType">
-        <cb-dict
+        <cb-param
           :parent-vue="_self"
           :data-form="dataForm"
           placeholder="请选择岗位类型"
           name="postType"
-          dict="sex"
+          param="postType"
           type="select"
         />
       </el-form-item>

@@ -4,6 +4,19 @@ import axios from '@/http/axios'
  * 字典管理模块
  */
 
+/**
+ * 根据条件分页查询字典列表
+ * @param {*} params
+ * @returns
+ */
+export const findPage = (params) => {
+  return axios({
+    url: '/api/sys/dict/query',
+    method: 'get',
+    params
+  })
+}
+
 // 保存
 export const save = (data) => {
   return axios({
@@ -20,11 +33,4 @@ export const batchDelete = (data) => {
     data
   })
 }
-// 分页查询
-export const findPage = (data) => {
-  return axios({
-    url: '/dict/findPage',
-    method: 'post',
-    data
-  })
-}
+

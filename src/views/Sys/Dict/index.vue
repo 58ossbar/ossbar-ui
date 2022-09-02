@@ -1,0 +1,416 @@
+<template>
+  <div>
+    <el-container class="page-container scrollAllY">
+      <el-aside width="220px" class="box_shadows bgcolor LeftPadding marginBottom">
+        <div class="displayFlex marginBottom">
+          <el-input
+            v-model="filterText"
+            class="buttomMargin"
+            size="small"
+            placeholder="输入字典名称查询"
+            suffix-icon="el-icon-search"
+            clearable
+            maxlength="30"
+            type="text" />
+          <cb-button
+            class="queryButtonPlus"
+            icon="el-icon-plus"
+            perms="sys:tsysdict:add"
+            type="primary"
+            @click="handleAdd({dictSort:'1'})"/>
+        </div>
+        <el-tree
+          v-loading="loadingTree"
+          ref="dictTree"
+          :data="listData"
+          :highlight-current="true"
+          :props="dictTreeProps"
+          :element-loading-text="$t('action.loading')"
+          :filter-node-method="filterNode"
+          node-key="dictId"
+          current-node-key="" > <!-- @node-click="handleSelectDeptTree" -->
+          <div
+            slot-scope="{ node, data }"
+            :class="{displayColor:!data.swithToggle}"
+            class="fontSizeComm widthAll dictDivSlot"
+            @click="() => handleSelectDeptTree(data)"
+            @mouseleave="() => mouseleaves(data)"
+            @mouseenter="() => mouseenters(data)">
+            <div >
+              <span>
+                <img v-if="data.dictUrl" :src="baseDictUrls+data.dictUrl" class="dictIconTreeStyle" >
+                <img v-else class="dictIconTreeStyle" src="../../../assets/user1.png" >
+                {{ node.label }}
+              </span>
+              <span
+                :style="data.iconStyleI ?'display:none' : 'display:inline-block'"
+                class="treeIconHover"
+                @mouseleave="() => mouseleave(data)"
+                @mouseenter="() => mouseenter(data)">
+                <i class="el-icon-more buttomMargin "/>
+              </span>
+              <ul
+                :style="data.ulStyle ?'display:none' : 'display:inline-block'"
+                class="treeHoverUl"
+                @mouseenter="() => mouseenter(data)"
+                @mouseleave="() => mouseleave(data)" >
+                <li><cb-button
+                  :label="$t('action.add')"
+                  icon="fa fa-plus"
+                  perms="sys:menu:add"
+                  class="treeHoverUlButtom "
+                  @click="() => handleAdd(data)" />
+                </li>
+                <li><cb-button
+                  :label="$t('action.edit')"
+                  icon="fa fa-edit"
+                  perms="sys:tsysdict:edit"
+                  class="treeHoverUlButtom "
+                  @click="() => handleEdit(data)" />
+                </li>
+                <li>
+                  <cb-button
+                    :label="$t('action.delete')"
+                    icon="fa fa-trash-o"
+                    perms="sys:tsysdict:remove"
+                    class="treeHoverUlButtom"
+                    @click="() => handleDelete(data)" />
+                </li>
+              </ul>
+            </div>
+          </div>
+        </el-tree>
+      </el-aside>
+      <el-container>
+        <el-header class="box_shadows bgcolor  scrollRightYDictMenu " style="height: auto;">
+          <!--工具栏-->
+          <el-form ref="queryForm" :inline="true" :model="filters" :size="size" class="queryForm textAlign" label-width="100px" label-position="right">
+            <el-collapse class="elCollapseItemNoBoeder elCollapseDict">
+              <el-row>
+                <el-col :span="3">
+                  <el-form-item class="dictInputQueryLabelWidth">
+                    <span>字典分类名称</span>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="5">
+                  <el-form-item class="dictInputQueryWidth textAlign">
+                    <el-input v-model="filters.dictName" maxlength="30" type="text" placeholder="字典分类名称" clearable/>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="3">
+                  <el-form-item class="dictInputQueryLabelWidth">
+                    <span>字典展示分类</span>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="5">
+                  <el-form-item class="dictInputQueryWidth">
+                    <cb-param
+                      :parent-vue="_self"
+                      :change="findPage"
+                      :filters="filters"
+                      placeholder="请选择"
+                      name="displaySort"
+                      param="displaySort"
+                      type="select"
+                      empty-label="全部"
+                    />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="3">
+                  <el-form-item class="dictInputQueryLabelWidth">
+                    <span>是否默认值</span>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="5">
+                  <el-form-item class="dictInputQueryWidth textAlign">
+                    <cb-param
+                      :parent-vue="_self"
+                      :change="findPage"
+                      :filters="filters"
+                      placeholder="请选择"
+                      name="isdefault"
+                      param="isdefault"
+                      type="select"
+                      empty-label="全部"
+                    />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-collapse-item class="elCollapseItemNoBoeder elCollapseItemMarginBottom">
+                <el-row>
+                  <el-col :span="3">
+                    <el-form-item class="dictInputQueryLabelWidth">
+                      <span>字典值</span>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="5">
+                    <el-form-item class="dictInputQueryWidth ">
+                      <el-input v-model="filters.dictValue" maxlength="100" type="text" placeholder="字典值" clearable/>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="3">
+                    <el-form-item class="dictInputQueryLabelWidth">
+                      <span>字典编码</span>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="5">
+                    <el-form-item class="dictInputQueryWidth ">
+                      <el-input v-model="filters.dictCode" maxlength="60" type="text" placeholder="字典编码" clearable/>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="3">
+                    <el-form-item class="dictInputQueryLabelWidth">
+                      <span>是否显示</span>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="5">
+                    <el-form-item class="dictInputQueryWidth" >
+                      <cb-param
+                        :parent-vue="_self"
+                        :change="findPage"
+                        :filters="filters"
+                        placeholder="请选择"
+                        name="displaying"
+                        param="displaying"
+                        type="select"
+                        empty-label="全部"
+                      />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-collapse-item>
+            </el-collapse>
+            <el-row class="elDeptFormButton dictQueryCenterButton">
+              <el-col :span="24">
+                <cb-button
+                  :label="$t('action.search')"
+                  icon="fa fa-search"
+                  perms="sys:tsysdict:query"
+                  type="primary"
+                  @click="findPage(null)"/>
+                <cb-button :label="$t('action.add')" icon="fa fa-plus" type="primary" perms="sys:tsysdict:add" @click="handleAdd" />
+              </el-col>
+            </el-row>
+
+          </el-form>
+        </el-header>
+        <el-main class="box_shadows bgcolor  scrollRightYDictMenu tableDict marginBottom">
+          <cb-table
+            ref="table"
+            :parent-vue="_self"
+            :data="pageResult"
+            :columns="columns"
+            :btn-columns="btnColumns"
+            perms-batch-delete="sys:tsyspost:add"
+            row-key="roleId"
+            @findPage="findPage"
+            @selectionChange="handleSelectionChange"
+            @handleBatchDelete="handleBatchDelete"/>
+        </el-main>
+      </el-container>
+    </el-container>
+  </div>
+</template>
+
+<script>
+import CbTable from '@/views/Core/CbTable'
+import CbButton from '@/views/Core/CbButton'
+export default {
+  components: {
+    CbTable,
+    CbButton
+  },
+  data() {
+    return {
+      size: 'small',
+      filters: {
+        // 字典分类名称
+        dictName: '',
+        // 字典展示分类
+        displaySort: '',
+        // 是否默认值
+        isdefault: '',
+        // 字典值
+        dictValue: '',
+        // 字典编码
+        dictCode: '',
+        // 是否显示
+        displaying: ''
+      },
+      loadingQuery: false,
+      pageRequest: {},
+      // 表格数据
+      pageResult: {},
+      columns: [
+        { prop: 'dictType', label: '分类编码', minWidth: 100 },
+        { prop: 'dictName', label: '分类名称', minWidth: 105 },
+        { prop: 'dictCode', label: '字典编码', minWidth: 105 },
+        { prop: 'dictValue', label: '字典值', minWidth: 85 },
+        // 0是默认
+        { prop: 'isdefault', label: '是否默认值', minWidth: 95 },
+        // 0是显示
+        { prop: 'displaying', label: '是否显示', minWidth: 95 }
+      ],
+      btnColumns: [
+        { icon: 'fa fa-edit', label: '修改', perms: 'sys:role:edit', callback: 'handleEdit' },
+        { icon: 'fa fa-trash', label: '删除', perms: 'sys:role:remove', callback: 'handleDelete' }
+      ],
+      // 表格中被选中的列数据
+      selections: []
+    }
+  },
+  watch: {
+    filterLeftTree(val) {
+      this.$refs.leftTree.filter(val)
+    }
+  },
+  mounted() {
+    this.queryOrgTree()
+  },
+  methods: {
+    filterNodeLeft(value, data) {
+      if (!value) return true
+      return data.orgName.indexOf(value) !== -1
+    },
+    handleSelectMenuTree(data) {
+      this.filters.orgId = data.orgId
+      this.findPage()
+    },
+    queryOrgTree() {
+      this.$api.dept.getOrgTree().then(res => {
+        if (res.code === 0) {
+          // const treeData = convertTreeData(res.data, 'orgId')
+          // this.dataLeftTree = treeData
+        }
+      })
+    },
+    findPage: function(data) {
+      if (data && data !== null) {
+        this.pageRequest = data.pageRequest
+      } else {
+        this.pageRequest.pageNum = 1
+      }
+      // 当前页
+      this.filters.page = this.pageRequest.pageNum
+      // 每页显示数
+      this.filters.limit = this.pageRequest.pageSize
+      console.log(this.filters)
+      this.$api.dict.findPage(this.filters).then(res => {
+        res.data.list.forEach(item => {
+          // 处理头像
+          // item.userimg = handleImagePath(item.userimg, true)
+          // 处理姓名，如果没有真实姓名，则用账号代替显示
+          item.userRealname = item.userRealname ? item.userRealname : item.username
+        })
+        this.pageResult = res.data
+        this.loadingQuery = false
+      }).then(data != null ? data.callback : '')
+    },
+    handleAdd() {
+      this.$refs.saveForm.handleAdd(this.dataLeftTree)
+    },
+    handleEdit(row) {
+      this.$refs.saveForm.handleEdit(row, this.dataLeftTree)
+    },
+    handleOk(data) {
+      this.findPage()
+    },
+    handleDelete(row) {
+      this.handleBatchDelete([row.roleId])
+    },
+    handleBatchDelete(ids) {
+      if (!ids || !ids.length) {
+        return false
+      }
+      this.$confirm('确认删除选中记录吗？', '提示', {
+        type: 'warning',
+        closeOnClickModal: false
+      }).then(() => {
+        this.$api.role.batchDelete(ids).then(res => {
+          if (res.code !== 0) {
+            this.$message.error(res.msg)
+          } else {
+            this.$message({ message: '操作成功', type: 'success' })
+            this.findPage()
+          }
+        }).catch(() => {
+          this.$message({ type: 'error', message: '删除失败,接口异常' })
+        })
+      }).catch(() => {
+        this.$message({ type: 'info', message: '删除未成功' })
+      })
+    },
+    handleSelectionChange(rows) {
+      this.selections = rows
+    },
+    /**
+     * 分配角色
+     */
+    handleAssignRoles() {
+      if (!this.selections || !this.selections.length) {
+        this.$message({ message: '请先在表格中，至少选择一个用户', type: 'warning' })
+        return false
+      }
+      let count = 0
+      for (let i = 0; i < this.selections.length; i++) {
+        if (Number(this.selections[i].status) === 1) {
+          count++
+        }
+      }
+      if (count !== this.selections.length) {
+        this.$message({ message: '不能给禁用的用户分配角色!', type: 'warning' })
+      }
+      // 去打开界面
+      this.$refs.assignRole.handleAssignRole(this.selections, this.$refs.table)
+    },
+    /**
+     * 清空权限
+     */
+    clearPerms: function() {
+      if (this.selections.length < 1) {
+        this.$message({ message: '请先在表格勾选要清空权限的用户', type: 'warning' })
+        return false
+      }
+      this.$confirm('确认清空权限吗？', '提示', {}).then(() => {
+        const commitArray = this.selections.map(item => item.userId)
+        this.$api.user.clearPermissions(commitArray).then((res) => {
+          if (res.code === 0) {
+            this.$message.success(res.msg)
+            this.$refs.table.clearSelection()
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+      })
+    },
+    /**
+     * 重置密码
+     */
+    resetPassword: function() {
+      if (this.selections.length < 1) {
+        this.$message({ message: '请先在表格勾选要重置密码的用户', type: 'warning' })
+        return false
+      }
+      if (this.selections.length > 20) {
+        this.$message({ message: '一次性最多只能选择20个用户', type: 'warning' })
+        return false
+      }
+      this.$confirm('确认重置密码吗？', '提示', {}).then(() => {
+        const commitArray = this.selections.map(item => item.userId)
+        this.$api.user.resetPassword(commitArray).then((res) => {
+          if (res.code === 0) {
+            this.$message.success(res.msg)
+            this.$refs.table.clearSelection()
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+      })
+    }
+  }
+}
+</script>
+
+<style>
+
+</style>
