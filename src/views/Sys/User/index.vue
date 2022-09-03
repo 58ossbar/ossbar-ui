@@ -142,7 +142,7 @@
             :columns="columns"
             :btn-columns="btnColumns"
             perms-batch-delete="sys:tsyspost:add"
-            row-key="roleId"
+            row-key="userId"
             @findPage="findPage"
             @selectionChange="handleSelectionChange"
             @handleBatchDelete="handleBatchDelete"/>
@@ -260,7 +260,7 @@ export default {
       this.findPage()
     },
     handleDelete(row) {
-      this.handleBatchDelete([row.roleId])
+      this.handleBatchDelete([row.userId])
     },
     handleBatchDelete(ids) {
       if (!ids || !ids.length) {
@@ -270,7 +270,7 @@ export default {
         type: 'warning',
         closeOnClickModal: false
       }).then(() => {
-        this.$api.role.batchDelete(ids).then(res => {
+        this.$api.user.batchDelete(ids).then(res => {
           if (res.code !== 0) {
             this.$message.error(res.msg)
           } else {

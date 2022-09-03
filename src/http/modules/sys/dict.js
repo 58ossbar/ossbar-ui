@@ -18,13 +18,22 @@ export const findPage = (params) => {
 }
 
 // 保存
-export const save = (data) => {
+export const saveType = (data) => {
   return axios({
-    url: '/dict/save',
+    url: '/api/sys/dict/saveType',
     method: 'post',
     data
   })
 }
+
+export const update = (data) => {
+  return axios({
+    url: '/api/sys/dict/update',
+    method: 'post',
+    data
+  })
+}
+
 // 删除
 export const batchDelete = (data) => {
   return axios({
@@ -34,3 +43,10 @@ export const batchDelete = (data) => {
   })
 }
 
+export const findTree = (params) => {
+  return axios({
+    url: '/api/sys/dict/dicttree',
+    method: 'get',
+    params
+  })
+}

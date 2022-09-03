@@ -114,13 +114,13 @@
             </div>
             <div class="floating-half">
               <el-form-item label="出生日期" prop="birthday">
-                <!-- <el-date-picker
+                <el-date-picker
                   v-model="dataForm.birthday"
                   style="width: 100%"
                   format="yyyy-MM-dd"
                   value-format="yyyy-MM-dd"
                   type="date"
-                  placeholder="选择日期"/> -->
+                  placeholder="选择日期"/>
               </el-form-item>
               <el-form-item label="所属民族" prop="nation">
                 <el-input v-model="dataForm.nation" auto-complete="off" maxlength="20"/>
@@ -327,13 +327,12 @@ export default {
       this.orgTreeData = orgTreeData
       this.$api.user.view(row.userId).then(res => {
         if (res.code === 0) {
-          // 回显数据
-          this.dataForm = Object.assign({}, res.data)
+          // 回显所属岗位
+          res.data.postId = (res.data.postIdList && res.data.postIdList.length) ? res.data.postIdList[0] : ''
           // 回显副机构
           this.popupTreeOrgIdList = res.data.orgIdList
-          // 回显所属岗位
-          this.dataForm.postId = (res.data.postIdList && res.data.postIdList.length) ? res.data.postIdList[0] : ''
-          console.log(this.dataForm)
+          // 回显数据
+          this.dataForm = Object.assign({}, res.data)
         }
       })
     },

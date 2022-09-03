@@ -17,18 +17,18 @@
             icon="el-icon-plus"
             perms="sys:tsysdict:add"
             type="primary"
-            @click="handleAdd({dictSort:'1'})"/>
+            @click="handleAddType({dictSort:'1'})"/>
         </div>
         <el-tree
           v-loading="loadingTree"
           ref="dictTree"
           :data="listData"
           :highlight-current="true"
-          :props="dictTreeProps"
+          :props="{label: 'dictName', children: 'list'}"
           :element-loading-text="$t('action.loading')"
           :filter-node-method="filterNode"
           node-key="dictId"
-          current-node-key="" > <!-- @node-click="handleSelectDeptTree" -->
+          current-node-key="" >
           <div
             slot-scope="{ node, data }"
             :class="{displayColor:!data.swithToggle}"
@@ -209,16 +209,24 @@
         </el-main>
       </el-container>
     </el-container>
+    <!-- 新增修改字典界面 -->
+    <SaveForm ref="saveForm" @ok="handleOk" />
+    <!-- 新增修改字典分类界面 -->
+    <SaveTypeForm ref="saveTypeForm" @ok="handleOkType" />
   </div>
 </template>
 
 <script>
 import CbTable from '@/views/Core/CbTable'
 import CbButton from '@/views/Core/CbButton'
+import SaveForm from './SaveForm.vue'
+import SaveTypeForm from './SaveTypeForm.vue'
 export default {
   components: {
     CbTable,
-    CbButton
+    CbButton,
+    SaveForm,
+    SaveTypeForm
   },
   data() {
     return {
@@ -256,7 +264,11 @@ export default {
         { icon: 'fa fa-trash', label: '删除', perms: 'sys:role:remove', callback: 'handleDelete' }
       ],
       // 表格中被选中的列数据
-      selections: []
+      selections: [],
+      // 左侧搜索
+      filterText: '',
+      loadingTree: false,
+      listData: []
     }
   },
   watch: {
@@ -265,22 +277,34 @@ export default {
     }
   },
   mounted() {
-    this.queryOrgTree()
+    this.findTreeData()
   },
   methods: {
-    filterNodeLeft(value, data) {
+    filterNode(value, data) {
       if (!value) return true
-      return data.orgName.indexOf(value) !== -1
+      return data.dictName.indexOf(value) !== -1
     },
-    handleSelectMenuTree(data) {
-      this.filters.orgId = data.orgId
+    handleSelectDeptTree(data) {
+      this.filters.parentType = data.dictId
       this.findPage()
     },
-    queryOrgTree() {
-      this.$api.dept.getOrgTree().then(res => {
+    findTreeData(dictId) {
+      this.loadingTree = true
+      this.$api.dict.findTree().then(res => {
+        this.loadingTree = false
         if (res.code === 0) {
-          // const treeData = convertTreeData(res.data, 'orgId')
-          // this.dataLeftTree = treeData
+          res.data.forEach(item => {
+            item.swithToggle = item.displaying === '1'
+            item.ulStyle = true
+            item.iconStyleI = true
+          })
+          this.listData = res.data
+          // 选中指定节点
+          this.$nextTick(() => {
+            if (dictId) {
+              this.$refs.dictTree.setCurrentKey(dictId)
+            }
+          })
         }
       })
     },
@@ -294,7 +318,6 @@ export default {
       this.filters.page = this.pageRequest.pageNum
       // 每页显示数
       this.filters.limit = this.pageRequest.pageSize
-      console.log(this.filters)
       this.$api.dict.findPage(this.filters).then(res => {
         res.data.list.forEach(item => {
           // 处理头像
@@ -316,7 +339,7 @@ export default {
       this.findPage()
     },
     handleDelete(row) {
-      this.handleBatchDelete([row.roleId])
+      this.handleBatchDelete([row.dictId])
     },
     handleBatchDelete(ids) {
       if (!ids || !ids.length) {
@@ -343,69 +366,23 @@ export default {
     handleSelectionChange(rows) {
       this.selections = rows
     },
-    /**
-     * 分配角色
-     */
-    handleAssignRoles() {
-      if (!this.selections || !this.selections.length) {
-        this.$message({ message: '请先在表格中，至少选择一个用户', type: 'warning' })
-        return false
-      }
-      let count = 0
-      for (let i = 0; i < this.selections.length; i++) {
-        if (Number(this.selections[i].status) === 1) {
-          count++
-        }
-      }
-      if (count !== this.selections.length) {
-        this.$message({ message: '不能给禁用的用户分配角色!', type: 'warning' })
-      }
-      // 去打开界面
-      this.$refs.assignRole.handleAssignRole(this.selections, this.$refs.table)
+    handleAddType() {
+      this.$refs.saveTypeForm.handleAdd(this.dataLeftTree)
     },
-    /**
-     * 清空权限
-     */
-    clearPerms: function() {
-      if (this.selections.length < 1) {
-        this.$message({ message: '请先在表格勾选要清空权限的用户', type: 'warning' })
-        return false
-      }
-      this.$confirm('确认清空权限吗？', '提示', {}).then(() => {
-        const commitArray = this.selections.map(item => item.userId)
-        this.$api.user.clearPermissions(commitArray).then((res) => {
-          if (res.code === 0) {
-            this.$message.success(res.msg)
-            this.$refs.table.clearSelection()
-          } else {
-            this.$message.error(res.msg)
-          }
-        })
-      })
+    handleOkType(submitData) {
+      this.findTreeData(submitData.dictId)
     },
-    /**
-     * 重置密码
-     */
-    resetPassword: function() {
-      if (this.selections.length < 1) {
-        this.$message({ message: '请先在表格勾选要重置密码的用户', type: 'warning' })
-        return false
-      }
-      if (this.selections.length > 20) {
-        this.$message({ message: '一次性最多只能选择20个用户', type: 'warning' })
-        return false
-      }
-      this.$confirm('确认重置密码吗？', '提示', {}).then(() => {
-        const commitArray = this.selections.map(item => item.userId)
-        this.$api.user.resetPassword(commitArray).then((res) => {
-          if (res.code === 0) {
-            this.$message.success(res.msg)
-            this.$refs.table.clearSelection()
-          } else {
-            this.$message.error(res.msg)
-          }
-        })
-      })
+    mouseenters: function(data) {
+      data.iconStyleI = false
+    },
+    mouseleaves: function(data) {
+      data.iconStyleI = true
+    },
+    mouseenter: function(data) {
+      data.ulStyle = false
+    },
+    mouseleave: function(data) {
+      data.ulStyle = true
     }
   }
 }
