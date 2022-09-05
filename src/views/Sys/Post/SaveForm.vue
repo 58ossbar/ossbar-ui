@@ -98,7 +98,6 @@ export default {
       this.dialogVisible = true
       this.$api.post.view(row.postId).then(res => {
         if (res.code === 0) {
-          // 赋值
           this.dataForm = Object.assign({}, res.data)
         }
       })

@@ -1,12 +1,12 @@
 <template>
   <div style="text-align: left;">
     <el-radio-group v-if="type == 'radio'" v-model="modelData" class="cb-param">
-      <el-radio v-if="emptyLabel || emptyLabel == ''" key="" label="">{{ emptyLabel }}</el-radio>
+      <el-radio v-if="emptyLabel" key="" label="">{{ emptyLabel }}</el-radio>
       <el-radio v-for="data in params" :label="data.parano" :key="data.parano">{{ data.paraKey }}</el-radio>
     </el-radio-group>
 
-    <el-select v-if="type == 'select'" v-model="modelData" :placeholder="placeholder" clearable style="width: 100%" class="cb-param">
-      <el-option v-if="emptyLabel || emptyLabel == ''" key="" :label="emptyLabel" value=""/>
+    <el-select v-if="type == 'select'" v-model="modelData" :placeholder="placeholder" :disabled="disabled" clearable style="width: 100%" class="cb-param">
+      <el-option v-if="emptyLabel" key="" :label="emptyLabel" value=""/>
       <el-option
         v-for="data in params"
         :key="data.parano"
@@ -59,7 +59,62 @@ export default {
   name: 'CbParam', // 继承父组件中的id，name属性，拓展功能请在此配置
   components: {
   },
-  props: ['placeholder', 'name', 'dataForm', 'filters', 'type', 'param', 'emptyLabel', 'change', 'parentVue'],
+  // props: ['placeholder', 'name', 'dataForm', 'filters', 'type', 'param', 'emptyLabel', 'change', 'parentVue', 'disabled'],
+  props: {
+    // 传固定值_self，不能改变，表单校验时会用到，必传固定参数
+    parentVue: {
+      type: Object,
+      required: true
+    },
+    // 属性与JavaBean字段一致，必传
+    name: {
+      type: String,
+      required: true
+    },
+    // 数分类编码，必传
+    param: {
+      type: String,
+      required: true,
+      default: ''
+    },
+    // 固定写法，不要改变，新增修改界面中必传
+    dataForm: {
+      type: Object,
+      required: false,
+      default: () => {
+        return {}
+      }
+    },
+    // 固定写法，不要改变，查询界面中必传
+    filters: {
+      type: Object,
+      required: false,
+      default: () => {
+        return {}
+      }
+    },
+    // 显示类型：select下拉框，radio单选框,switch开关，必传
+    type: {
+      type: String,
+      required: false,
+      default: 'select'
+    },
+    // 提示语，可选参数，默认为：图片上传
+    placeholder: {
+      type: String,
+      required: false,
+      default: ''
+    },
+    emptyLabel: {
+      type: String,
+      required: false,
+      default: ''
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       params: [],
@@ -78,7 +133,7 @@ export default {
         if (this.parentVue) {
           // 当页面存在多个表单时，需要遍历找到各自对应的表单进行校验重置
           for (const ref in this.parentVue.$refs) {
-            if (this.parentVue.$refs[ref].model == this.dataForm) {
+            if (this.parentVue.$refs[ref].model === this.dataForm) {
               this.parentVue.$refs[ref].validateField(this.name)
             }
           }

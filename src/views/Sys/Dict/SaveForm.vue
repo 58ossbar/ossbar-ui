@@ -19,7 +19,7 @@
           <el-form-item label="字典分类编码" prop="dictType">
             <el-input
               v-model="dataForm.dictType"
-              :disabled="dataForm.dictSort === '2'"
+              disabled
               auto-complete="off"
               clearable
               maxlength="30"
@@ -31,7 +31,7 @@
           <el-form-item label="字典分类名称" prop="dictName">
             <el-input
               v-model="dataForm.dictName"
-              :disabled="dataForm.dictSort === '2'"
+              disabled
               auto-complete="off"
               clearable
               maxlength="30"
@@ -42,19 +42,19 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item v-if="dataForm.dictSort === '2'" label="字典编码" prop="dictCode">
+          <el-form-item label="字典编码" prop="dictCode">
             <el-input v-model="dataForm.dictCode" auto-complete="off" placeholder="字典编码" clearable />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item v-if="dataForm.dictSort === '2'" label="字典值" prop="dictValue">
+          <el-form-item label="字典值" prop="dictValue">
             <el-input v-model="dataForm.dictValue" auto-complete="off" placeholder="字典值" clearable />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item v-if="dataForm.dictSort === '2'" label="排序号" prop="sortNum">
+          <el-form-item label="排序号" prop="sortNum">
             <el-input-number
               v-model="dataForm.sortNum"
               :min="1"
@@ -63,19 +63,17 @@
               label="排序号"
               class="widthAll"/>
           </el-form-item>
-
         </el-col>
         <el-col :span="12">
-          <el-form-item v-if="dataForm.dictSort === '2'" label="默认值" prop="isdefault">
-            <el-radio-group v-model="dataForm.isdefault" class=" textAlign widthAll">
-              <el-radio
-                v-for="data in dictDefaultList"
-                :label="data.value"
-                :key="data.value"
-                class="elRadioMargin">{{ data.label }}</el-radio>
-            </el-radio-group>
+          <el-form-item label="默认值" prop="isdefault">
+            <cb-param
+              :parent-vue="_self"
+              :data-form="dataForm"
+              name="isdefault"
+              param="isdefault"
+              type="radio"
+            />
           </el-form-item>
-
         </el-col>
       </el-row>
       <el-row>
@@ -86,6 +84,7 @@
                 <cb-param
                   :parent-vue="_self"
                   :data-form="dataForm"
+                  disabled
                   placeholder="请选择"
                   name="displaySort"
                   param="displaySort"
@@ -114,7 +113,7 @@
               <el-form-item label="是否显示" prop="displaying">
                 <cb-param
                   :parent-vue="_self"
-                  :data-from="dataForm"
+                  :data-form="dataForm"
                   placeholder="请选择"
                   name="displaying"
                   param="displaying"
@@ -126,7 +125,14 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="字典图标" prop="dictUrl">
-            shangc
+            <cb-upload
+              :parent-vue="_self"
+              :data-form="dataForm"
+              type="1"
+              name="dictUrl"
+              placeholder="点击上传"
+              title="点击上传"
+            />
           </el-form-item>
         </el-col>
       </el-row>
@@ -142,9 +148,20 @@
 <script>
 export default {
   data() {
-    var validateName = (rule, value, callback) => {
+    var validateName3 = (rule, value, callback) => {
+      // eslint-disable-next-line no-undef
+      value = $.trim(value)
       if (!value) {
-        return callback(new Error('岗位名称不能为空'))
+        return callback(new Error('字典编码不能为空'))
+      } else {
+        callback()
+      }
+    }
+    var validateName4 = (rule, value, callback) => {
+      // eslint-disable-next-line no-undef
+      value = $.trim(value)
+      if (!value) {
+        return callback(new Error('字典值不能为空'))
       } else {
         callback()
       }
@@ -159,67 +176,56 @@ export default {
       dialogVisible: false,
       // 表单数据
       dataForm: {
+        // 字典id
         dictId: null,
-        // 字典描述  1、平台内2、平台外
-        remark: null,
-        dictClass: null,
-        // 单选或多选：主要针对树形控件
-        multiType: null,
-        // 字典类型
-        dictSort: '1',
-        // 所属机构name
-        orgName: null,
-        // 所属机构id
-        orgId: null,
         // 字典分类编码
         dictType: null,
         // 字典分类名称
         dictName: null,
+        // 字典编码
+        dictCode: '',
+        // 字典值
+        dictValue: '',
+        // 所属机构id
+        orgId: null,
         // 字典展现分类  下拉类型(select)树形(tree) 复选型(checkbox)单选radio
         displaySort: '1',
-        // 字典编码
-        dictCode: null,
-        // 字典值
-        dictValue: null,
-        // 排序号
-        sortNum: 1,
         // 是否默认值
         isdefault: '1',
         // 是否显示
         displaying: '1',
         // 字典图标
         dictUrl: null,
-        //	父分类
-        parentType: '0',
-        attachId: null,
-        ulStyle: true,
-        swithToggle: true,
-        iconStyleI: true
+        // 排序号
+        sortNum: 1
       },
       // 表单校验规则
       dataRule: {
-        postName: [{ validator: validateName, required: true, message: '岗位名称不能为空', trigger: 'blur' }],
-        postType: [{ required: true, message: '岗位类型不能为空', trigger: 'blur' }]
-      }
+        dictCode: [{ validator: validateName3, required: true, message: '字典编码不能为空', trigger: 'blur' }],
+        dictValue: [{ validator: validateName4, required: true, message: '字典值不能为空', trigger: 'blur' }],
+        dictName: [{ required: true, message: '字典分类名称不能为空', trigger: 'blur' }],
+        dictType: [{ required: true, message: '字典分类编码不能为空', trigger: 'blur' }]
+      },
+      parentData: {}
     }
   },
   methods: {
-    handleAdd() {
+    handleAdd(data) {
       this.operation = true
       this.dialogVisible = true
       if (this.$refs['dataForm']) {
         this.$refs['dataForm'].clearValidate()
       }
-      this.$api.post.getMaxSortNum().then(res => {
-        this.dataForm.sort = res.data
-      })
+      this.parentData = Object.assign({}, data)
+      this.dataForm.dictType = this.parentData.dictType
+      this.dataForm.dictName = this.parentData.dictName
+      this.dataForm.parentType = this.parentData.dictId
     },
     handleEdit(row) {
       this.operation = false
       this.dialogVisible = true
-      this.$api.post.view(row.postId).then(res => {
+      this.$api.dict.view(row.dictId).then(res => {
         if (res.code === 0) {
-          // 赋值
           this.dataForm = Object.assign({}, res.data)
         }
       })
@@ -242,7 +248,7 @@ export default {
     },
     save(continueFlag) {
       const submitData = Object.assign({}, this.dataForm)
-      this.$api.post.save(submitData).then((res) => {
+      this.$api.dict.save(submitData).then((res) => {
         this.loading = false
         if (res.code === 0) {
           this.$message.success(res.msg)
@@ -261,7 +267,7 @@ export default {
     },
     update() {
       const submitData = Object.assign({}, this.dataForm)
-      this.$api.post.update(submitData).then((res) => {
+      this.$api.dict.update(submitData).then((res) => {
         this.loading = false
         if (res.code === 0) {
           this.$message.success(res.msg)

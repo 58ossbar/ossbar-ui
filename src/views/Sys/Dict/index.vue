@@ -38,7 +38,7 @@
             @mouseenter="() => mouseenters(data)">
             <div >
               <span>
-                <img v-if="data.dictUrl" :src="baseDictUrls+data.dictUrl" class="dictIconTreeStyle" >
+                <img v-if="data.dictUrl" :src="data.dictUrl" class="dictIconTreeStyle" >
                 <img v-else class="dictIconTreeStyle" src="../../../assets/user1.png" >
                 {{ node.label }}
               </span>
@@ -66,7 +66,7 @@
                   icon="fa fa-edit"
                   perms="sys:tsysdict:edit"
                   class="treeHoverUlButtom "
-                  @click="() => handleEdit(data)" />
+                  @click="() => handleEditType(data)" />
                 </li>
                 <li>
                   <cb-button
@@ -202,7 +202,7 @@
             :columns="columns"
             :btn-columns="btnColumns"
             perms-batch-delete="sys:tsyspost:add"
-            row-key="roleId"
+            row-key="dictId"
             @findPage="findPage"
             @selectionChange="handleSelectionChange"
             @handleBatchDelete="handleBatchDelete"/>
@@ -221,6 +221,7 @@ import CbTable from '@/views/Core/CbTable'
 import CbButton from '@/views/Core/CbButton'
 import SaveForm from './SaveForm.vue'
 import SaveTypeForm from './SaveTypeForm.vue'
+import { handleImagePath } from '@/utils/util'
 export default {
   components: {
     CbTable,
@@ -297,6 +298,7 @@ export default {
             item.swithToggle = item.displaying === '1'
             item.ulStyle = true
             item.iconStyleI = true
+            item.dictUrl = handleImagePath(item.dictUrl)
           })
           this.listData = res.data
           // 选中指定节点
@@ -330,7 +332,12 @@ export default {
       }).then(data != null ? data.callback : '')
     },
     handleAdd() {
-      this.$refs.saveForm.handleAdd(this.dataLeftTree)
+      const currData = this.$refs.dictTree.getCurrentNode()
+      if (currData == null) {
+        this.$message({ message: '请先在左侧选择一条目录再新增字典!', type: 'warning' })
+        return false
+      }
+      this.$refs.saveForm.handleAdd(currData)
     },
     handleEdit(row) {
       this.$refs.saveForm.handleEdit(row, this.dataLeftTree)
@@ -349,11 +356,12 @@ export default {
         type: 'warning',
         closeOnClickModal: false
       }).then(() => {
-        this.$api.role.batchDelete(ids).then(res => {
+        this.$api.dict.batchDelete(ids).then(res => {
           if (res.code !== 0) {
             this.$message.error(res.msg)
           } else {
             this.$message({ message: '操作成功', type: 'success' })
+            this.findTreeData()
             this.findPage()
           }
         }).catch(() => {
@@ -369,8 +377,12 @@ export default {
     handleAddType() {
       this.$refs.saveTypeForm.handleAdd(this.dataLeftTree)
     },
+    handleEditType(data) {
+      this.$refs.saveTypeForm.handleEdit(data)
+    },
     handleOkType(submitData) {
       this.findTreeData(submitData.dictId)
+      this.findPage()
     },
     mouseenters: function(data) {
       data.iconStyleI = false

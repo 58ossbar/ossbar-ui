@@ -86,7 +86,14 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="字典图标" prop="dictUrl">
-            shangc
+            <cb-upload
+              :parent-vue="_self"
+              :data-form="dataForm"
+              type="1"
+              name="dictUrl"
+              placeholder="点击上传"
+              title="点击上传"
+            />
           </el-form-item>
         </el-col>
       </el-row>
@@ -155,7 +162,6 @@ export default {
       dataRule: {
         dictName: [{ validator: validateName1, required: true, message: '字典分类名称不能为空', trigger: 'blur' }],
         dictType: [{ validator: validateName2, required: true, message: '字典分类编码不能为空', trigger: 'blur' }]
-
       }
     }
   },
@@ -170,7 +176,7 @@ export default {
     handleEdit(row) {
       this.operation = false
       this.dialogVisible = true
-      this.$api.post.view(row.postId).then(res => {
+      this.$api.dict.view(row.dictId).then(res => {
         if (res.code === 0) {
           this.dataForm = Object.assign({}, res.data)
         }
@@ -214,7 +220,7 @@ export default {
     },
     update() {
       const submitData = Object.assign({}, this.dataForm)
-      this.$api.post.update(submitData).then((res) => {
+      this.$api.dict.updateType(submitData).then((res) => {
         this.loading = false
         if (res.code === 0) {
           this.$message.success(res.msg)

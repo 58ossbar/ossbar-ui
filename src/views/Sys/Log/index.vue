@@ -8,78 +8,35 @@
             <el-row class="elCollapseDict">
               <el-col :span="2">
                 <el-form-item class="dictInputQueryLabelWidth">
-                  <span>上传人</span>
+                  <span>用户名</span>
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item class="dictInputQueryWidth textAlign">
-                  <el-input v-model="filters.uploadMan" maxlength="32" type="text" placeholder="上传人" clearable/>
+                <el-form-item class="dictInputQueryWidth ">
+                  <el-input v-model="filters.name" placeholder="用户名" clearable/>
                 </el-form-item>
               </el-col>
               <el-col :span="2">
                 <el-form-item class="dictInputQueryLabelWidth">
-                  <span>附件分类</span>
+                  <span>用户操作</span>
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item class="dictInputQueryWidth textAlign">
-                  <cb-param
-                    :parent-vue="_self"
-                    :change="findPage"
-                    :filters="filters"
-                    placeholder="请选择"
-                    name="fileType"
-                    param="fileType"
-                    type="select"
-                    empty-label="全部"
-                  />
+                <el-form-item class="dictInputQueryWidth ">
+                  <el-input v-model="filters.operation" placeholder="用户操作" clearable/>
                 </el-form-item>
               </el-col>
               <el-col :span="2">
                 <el-form-item class="dictInputQueryLabelWidth">
-                  <span>文件名称</span>
+                  <span>请求耗时(ms)</span>
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item class="dictInputQueryWidth textAlign">
-                  <el-input v-model="filters.fileName" maxlength="100" type="text" placeholder="文件名称" clearable/>
+                <el-form-item class="dictInputQueryWidth ">
+                  <el-input v-model="filters.timeConsuming" placeholder="请求耗时(ms)" clearable/>
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-collapse-item class="elCollapseItemNoBoeder elCollapseItemMarginBottom">
-              <el-row>
-                <el-col :span="2">
-                  <el-form-item class="dictInputQueryLabelWidth">
-                    <span>文件备注</span>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item class="dictInputQueryWidth textAlign">
-                    <el-input v-model="filters.remark" maxlength="100" type="text" placeholder="文件备注" clearable/>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="2">
-                  <el-form-item class="dictInputQueryLabelWidth">
-                    <span>上传时间</span>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="14">
-                  <el-form-item class="dictInputQueryWidth textAlign widthJiuBa ">
-                    <el-date-picker
-                      v-model="timeAll"
-                      :picker-options="pickerOptions"
-                      class="widthAll"
-                      type="datetimerange"
-                      value-format="yyyy-MM-dd HH:mm:ss"
-                      format="yyyy-MM-dd HH:mm:ss"
-                      range-separator="至"
-                      start-placeholder="上传开始时间"
-                      end-placeholder="上传结束时间"
-                      align="right" />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-collapse-item>
           </el-collapse>
           <el-row class="elDeptFormButton dictQueryCenterButton">
             <el-col :span="24">
@@ -96,7 +53,7 @@
           :columns="columns"
           :btn-columns="btnColumns"
           perms-batch-delete="sys:tsysattach:remove"
-          row-key="attachId"
+          row-key="id"
           @findPage="findPage"
           @toggleRowSelection="toggleRowSelection"
           @selectionChange="selectionChange"
@@ -126,17 +83,13 @@ export default {
       pageRequest: {},
       pageResult: {},
       columns: [
-        { prop: 'createUserId', label: '上传人', minWidth: 80 },
-        { prop: 'createTime', label: '上传时间', minWidth: 80 },
-        { prop: 'ljUrl', label: '链接地址', minWidth: 95 },
-        // 如果未提交则为空
-        { prop: 'pkid', label: '关联ID', minWidth: 85 },
-        { prop: 'remark', label: '文件备注', minWidth: 80 },
-        { prop: 'fileType', label: '附件分类', minWidth: 80 },
-        { prop: 'fileName', label: '文件名称', minWidth: 80 },
-        { prop: 'fileUrl', label: '文件路径', minWidth: 95 },
-        // 0是未提交,1是已提交
-        { prop: 'fileState', label: '文件状态', minWidth: 80 }
+        { prop: 'username', label: '用户名', minWidth: 80 },
+        { prop: 'operation', label: '用户操作', minWidth: 130 },
+        { prop: 'params', label: '请求参数', minWidth: 200 },
+        { prop: 'timeConsuming', label: '请求耗时(ms)', minWidth: 120 },
+        { prop: 'returns', label: '响应参数', minWidth: 200 },
+        { prop: 'createDate', label: '记录时间', minWidth: 120 },
+        { prop: 'exceptionDetail', label: '异常信息', minWidth: 200 }
       ],
       btnColumns: [
         { icon: 'fa fa-trash', label: '删除', perms: 'sys:tsyspost:remove', callback: 'handleDelete' }
@@ -190,7 +143,7 @@ export default {
     selectionChange() {},
     toggleRowSelection() {},
     handleDelete(row) {
-      this.handleBatchDelete([row.attachId])
+      this.handleBatchDelete([row.id])
     },
     handleBatchDelete(ids) {
       this.$confirm('确认删除选中记录吗？', '提示', {
