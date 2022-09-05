@@ -23,10 +23,12 @@ import * as loginLog from './modules/sys/login-log'
 import * as settings from './modules/sys/settings'
 // 附件管理
 import * as attach from './modules/sys/attach'
+// 定时任务
+import * as job from './modules/sys/job'
 // TODO 在下面累加你自己的业务js即可
 
 // 默认全部导出
 export default {
-  login, user, dept, role, menu, dict, post, log, loginLog, settings, attach
+  login, user, dept, role, menu, dict, post, log, loginLog, settings, attach, job
   // TODO 在这累加上面你自己定义的名称即可
 }
