@@ -17,7 +17,7 @@
       label-width="100px"
       @keyup.enter.native="submitForm()"
     >
-      <div style="width: 50%; float: left;">
+      <div class="floating-half">
         <el-form-item label="角色名称" prop="roleName">
           <el-input
             ref="dataFormRoleName"
@@ -54,7 +54,7 @@
           />
         </el-form-item>
       </div>
-      <div style="width: 50%; float: left;">
+      <div class="floating-half">
         <el-form-item label="数据范围" prop="dataScope" >
           <el-select v-model="dataForm.dataScope" placeholder="请选择数据范围，必选" style="width: 100%;" clearable @clear="toValidateField('dataScope')" @change="queryScope">
             <el-option
