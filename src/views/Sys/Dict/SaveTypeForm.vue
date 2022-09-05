@@ -240,6 +240,9 @@ export default {
       this.resetFormDatas()
     },
     resetFormDatas() {
+      if (this.$refs['dataForm']) {
+        this.$refs['dataForm'].clearValidate()
+      }
       this.dataForm = {
         // 字典id
         dictId: null,

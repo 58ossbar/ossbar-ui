@@ -78,3 +78,16 @@ export const findTree = (params) => {
     params
   })
 }
+
+/**
+ * 获取最大排序号
+ * @param params
+ * @returns {*|Promise|Promise<any>}
+ */
+export const getMaxSortNum = (params) => {
+  return axios({
+    url: '/api/sys/dict/getMaxSortNum',
+    method: 'get',
+    params
+  })
+}

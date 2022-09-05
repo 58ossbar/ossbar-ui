@@ -233,6 +233,7 @@ export default {
     return {
       size: 'small',
       filters: {
+        parentType: '',
         // 字典分类名称
         dictName: '',
         // 字典展示分类
@@ -273,8 +274,8 @@ export default {
     }
   },
   watch: {
-    filterLeftTree(val) {
-      this.$refs.leftTree.filter(val)
+    filterText(val) {
+      this.$refs.dictTree.filter(val)
     }
   },
   mounted() {
@@ -362,6 +363,7 @@ export default {
           } else {
             this.$message({ message: '操作成功', type: 'success' })
             this.findTreeData()
+            this.filters.parentType = ''
             this.findPage()
           }
         }).catch(() => {
@@ -382,6 +384,7 @@ export default {
     },
     handleOkType(submitData) {
       this.findTreeData(submitData.dictId)
+      this.filters.parentType = submitData.dictId
       this.findPage()
     },
     mouseenters: function(data) {

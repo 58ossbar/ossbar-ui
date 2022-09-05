@@ -217,6 +217,9 @@ export default {
         this.$refs['dataForm'].clearValidate()
       }
       this.parentData = Object.assign({}, data)
+      this.$api.dict.getMaxSortNum({ parentType: this.parentData.dictId }).then(res => {
+        this.dataForm.sortNum = res.data
+      })
       this.dataForm.dictType = this.parentData.dictType
       this.dataForm.dictName = this.parentData.dictName
       this.dataForm.parentType = this.parentData.dictId
@@ -287,18 +290,39 @@ export default {
       this.resetFormDatas()
     },
     resetFormDatas() {
-      this.dataForm = {
-        // 岗位id
-        postId: null,
-        // 岗位类型
-        postType: '',
-        // 岗位名称
-        postName: '',
-        // 排序号
-        sort: '',
-        // 备注
-        remark: ''
+      if (this.$refs['dataForm']) {
+        this.$refs['dataForm'].clearValidate()
       }
+      this.dataForm = {
+        // 字典id
+        dictId: null,
+        // 字典分类编码
+        dictType: null,
+        // 字典分类名称
+        dictName: null,
+        // 字典编码
+        dictCode: '',
+        // 字典值
+        dictValue: '',
+        // 所属机构id
+        orgId: null,
+        // 字典展现分类  下拉类型(select)树形(tree) 复选型(checkbox)单选radio
+        displaySort: '1',
+        // 是否默认值
+        isdefault: '1',
+        // 是否显示
+        displaying: '1',
+        // 字典图标
+        dictUrl: null,
+        // 排序号
+        sortNum: 1
+      }
+      this.$api.dict.getMaxSortNum({ parentType: this.parentData.dictId }).then(res => {
+        this.dataForm.sortNum = res.data
+      })
+      this.dataForm.dictType = this.parentData.dictType
+      this.dataForm.dictName = this.parentData.dictName
+      this.dataForm.parentType = this.parentData.dictId
     }
   }
 }
