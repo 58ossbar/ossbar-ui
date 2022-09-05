@@ -116,6 +116,10 @@ export default {
         return false
       }
       this.src = baseUrl + n[this.name]
+      // 不保存文件夹名
+      if (this.dataForm[this.name]) {
+        this.dataForm[this.name] = this.dataForm[this.name].substring(this.dataForm[this.name].lastIndexOf('/') + 1, this.dataForm[this.name].length)
+      }
     }
   },
   mounted() {
