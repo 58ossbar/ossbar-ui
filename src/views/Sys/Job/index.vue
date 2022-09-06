@@ -30,9 +30,9 @@
             <el-col :span="24">
               <cb-button :loading="loadingQuery" :label="$t('action.search')" icon="fa fa-search" perms="sys:tsyspost:query" type="primary" @click="findPage()"/>
               <cb-button :label="$t('action.add')" icon="fa fa-search" perms="sys:tsysserialno:query" type="primary" @click="handleAdd()"/>
-              <cb-button :label="$t('action.stop')" icon="fa fa-lemon-o" perms="sys:job:pause" type="primary" @click="handleStop" />
-              <cb-button :label="$t('action.recovery')" icon="fa fa-shower" perms="sys:job:resume" type="primary" @click="handleRecovery" />
-              <cb-button :label="$t('action.execute')" icon="fa fa-flag-o" perms="sys:job:run" type="primary" @click="handleExecute" />
+              <cb-button :loading="loadingPause" :label="$t('action.stop')" icon="fa fa-lemon-o" perms="sys:job:pause" type="primary" @click="handlePause" />
+              <cb-button :loading="loadingResume" :label="$t('action.recovery')" icon="fa fa-shower" perms="sys:job:resume" type="primary" @click="handleResume" />
+              <cb-button :loading="loadingExecute" :label="$t('action.execute')" icon="fa fa-flag-o" perms="sys:job:run" type="primary" @click="handleExecute" />
               <cb-button :label="$t('action.loglist')" icon="fa fa-flag-o" perms="sys:job:query" type="primary" @click="handleLogList" />
             </el-col>
           </el-row>
@@ -46,10 +46,10 @@
           :columns="columns"
           :btn-columns="btnColumns"
           perms-batch-delete="sys:tsyspost:remove"
-          row-key="postId"
+          row-key="jobId"
           @findPage="findPage"
           @toggleRowSelection="toggleRowSelection"
-          @selectionChange="selectionChange"
+          @selectionChange="handleSelectionChange"
           @handleEdit="handleEdit"
           @handleBatchDelete="handleBatchDelete"/>
       </el-main>
@@ -88,7 +88,12 @@ export default {
       btnColumns: [
         { icon: 'fa fa-edit', label: '修改', perms: 'sys:tsyspost:edit', callback: 'handleEdit' },
         { icon: 'fa fa-trash', label: '删除', perms: 'sys:tsyspost:remove', callback: 'handleDelete' }
-      ]
+      ],
+      // 表格中被选中的列数据
+      selections: [],
+      loadingPause: false,
+      loadingResume: false,
+      loadingExecute: false
     }
   },
   methods: {
@@ -115,17 +120,19 @@ export default {
     handleOk(data) {
       this.findPage()
     },
-    selectionChange() {},
+    handleSelectionChange(rows) {
+      this.selections = rows
+    },
     toggleRowSelection() {},
     handleDelete(row) {
-      this.handleBatchDelete([row.postId])
+      this.handleBatchDelete([row.jobId])
     },
     handleBatchDelete(ids) {
       this.$confirm('确认删除选中记录吗？', '提示', {
         type: 'warning',
         closeOnClickModal: false
       }).then(() => {
-        this.$api.post.batchDelete(ids).then(res => {
+        this.$api.job.batchDelete(ids).then(res => {
           if (res.code !== 0) {
             this.$message.error(res.msg)
           } else {
@@ -140,11 +147,62 @@ export default {
       })
     },
     // 暂停
-    handleStop() {},
+    handlePause() {
+      if (!this.selections || !this.selections.length) {
+        this.$message({ message: '请先在表格中，至少选择一项', type: 'warning' })
+        return false
+      }
+      this.loadingPause = true
+      const ids = this.selections.map(item => item.jobId)
+      this.$api.job.pause(ids).then((res) => {
+        this.loadingPause = false
+        if (res.code === 0) {
+          this.$message({ message: res.msg || '暂停成功', type: 'success' })
+          this.findPage()
+        } else {
+          this.$message({ message: res.msg || '暂停失败', type: 'error' })
+        }
+      }).catch(() => {
+        this.loadingPause = false
+      })
+    },
     // 恢复
-    handleRecovery() {},
+    handleResume() {
+      if (!this.selections || !this.selections.length) {
+        this.$message({ message: '请先在表格中，至少选择一项', type: 'warning' })
+        return false
+      }
+      this.loadingResume = true
+      const ids = this.selections.map(item => item.jobId)
+      this.$api.job.resume(ids).then((res) => {
+        this.loadingResume = false
+        if (res.code === 0) {
+          this.$message({ message: res.msg || '恢复成功', type: 'success' })
+          this.findPage()
+        } else {
+          this.$message({ message: res.msg || '恢复失败', type: 'error' })
+        }
+      }).catch(() => {
+        this.loadingResume = false
+      })
+    },
     // 立即执行
-    handleExecute() {},
+    handleExecute() {
+      if (!this.selections || !this.selections.length) {
+        this.$message({ message: '请先在表格中，至少选择一项', type: 'warning' })
+        return false
+      }
+      this.loadingExecute = true
+      const ids = this.selections.map(item => item.jobId)
+      this.$api.job.runTask(ids).then((res) => {
+        this.loadingExecute = false
+        if (res.code === 0) {
+          this.$message({ message: res.msg || '执行成功', type: 'success' })
+        } else {
+          this.$message({ message: res.msg || '执行失败', type: 'error' })
+        }
+      })
+    },
     // 日志列表
     handleLogList() {}
   }

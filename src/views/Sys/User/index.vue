@@ -123,7 +123,7 @@
             <!-- 按钮区 -->
             <el-row class="elDeptFormButton dictQueryCenterButton">
               <el-col :span="24">
-                <cb-button :label="$t('action.search')" :loading="loadingQuery" icon="fa fa-search" perms="sys:role:query" type="primary" @click="findPage()"/>
+                <cb-button :loading="loadingQuery" :label="$t('action.search')" icon="fa fa-search" perms="sys:role:query" type="primary" @click="findPage()"/>
                 <cb-button :label="$t('action.add')" icon="fa fa-plus" perms="sys:role:add" type="primary" @click="handleAdd" />
                 <cb-button :label="$t('action.assignRoles')" icon="fa fa-wheelchair" perms="sys:tsysuserinfo:role" type="primary" @click="handleAssignRoles"/>
                 <cb-button :label="$t('action.clearanceAuthority')" icon="fa fa-handshake-o" perms="sys:tsysuserinfo:clear" type="primary" @click="clearPerms()"/>
@@ -175,7 +175,7 @@ export default {
       size: 'small',
       filters: {
         // 角色名称
-        roleName: '',
+        userName: '',
         // 角色状态
         status: ''
       },
@@ -239,6 +239,7 @@ export default {
       this.filters.page = this.pageRequest.pageNum
       // 每页显示数
       this.filters.limit = this.pageRequest.pageSize
+      this.loadingQuery = true
       this.$api.user.findPage(this.filters).then(res => {
         res.data.list.forEach(item => {
           // 处理头像

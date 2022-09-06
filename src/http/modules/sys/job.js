@@ -12,6 +12,18 @@ export const findPage = (params) => {
   })
 }
 
+/**
+ * 查看明细
+ * @param {*} id 角色id
+ * @returns
+ */
+export const view = (id) => {
+  return axios({
+    url: '/api/sys/job/view/' + id,
+    method: 'get'
+  })
+}
+
 // 保存
 export const save = (data) => {
   return axios({
@@ -21,8 +33,16 @@ export const save = (data) => {
   })
 }
 
+export const update = (data) => {
+  return axios({
+    url: '/api/sys/job/update',
+    method: 'post',
+    data
+  })
+}
+
 // 删除、批量删除
-export const deletes = (data) => {
+export const batchDelete = (data) => {
   return axios({
     url: '/api/sys/job/deletes',
     method: 'post',

@@ -147,7 +147,7 @@ export default {
         } else {
           this.$message.error(res.msg)
         }
-      }).catch(() => {
+      }).catch((e) => {
         this.$message.error('接口调用失败')
         this.loading = false
       })

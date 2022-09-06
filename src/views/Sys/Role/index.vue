@@ -58,7 +58,7 @@
           </el-row>
           <el-row class="elDeptFormButton dictQueryCenterButton">
             <el-col :span="24">
-              <cb-button :label="$t('action.search')" :loading="loadingQuery" icon="fa fa-search" perms="sys:role:query" type="primary" @click="findPage()"/>
+              <cb-button :loading="loadingQuery" :label="$t('action.search')" icon="fa fa-search" perms="sys:role:query" type="primary" @click="findPage()"/>
               <cb-button :label="$t('action.add')" icon="fa fa-plus" perms="sys:role:add" type="primary" @click="handleAdd" />
               <cb-button :label="$t('action.assignUsers')" icon="fa fa-user-o" perms="sys:role:setUser" type="primary" @click="handleAssignUsers" />
             </el-col>
@@ -136,6 +136,7 @@ export default {
       this.filters.page = this.pageRequest.pageNum
       // 每页显示数
       this.filters.limit = this.pageRequest.pageSize
+      this.loadingQuery = true
       this.$api.role.findPage(this.filters).then(res => {
         this.pageResult = res.data
         this.loadingQuery = false

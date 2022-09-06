@@ -183,6 +183,7 @@ export default {
       this.filters.page = this.pageRequest.pageNum
       // 每页显示数
       this.filters.limit = this.pageRequest.pageSize
+      this.loadingQuery = true
       this.$api.loginLog.findPage(this.filters).then(res => {
         this.pageResult = res.data
         this.loadingQuery = false

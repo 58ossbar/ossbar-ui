@@ -182,16 +182,10 @@
             </el-collapse>
             <el-row class="elDeptFormButton dictQueryCenterButton">
               <el-col :span="24">
-                <cb-button
-                  :label="$t('action.search')"
-                  icon="fa fa-search"
-                  perms="sys:tsysdict:query"
-                  type="primary"
-                  @click="findPage(null)"/>
+                <cb-button :loading="loadingQuery" :label="$t('action.search')" icon="fa fa-search" perms="sys:tsysdict:query" type="primary" @click="findPage(null)"/>
                 <cb-button :label="$t('action.add')" icon="fa fa-plus" type="primary" perms="sys:tsysdict:add" @click="handleAdd" />
               </el-col>
             </el-row>
-
           </el-form>
         </el-header>
         <el-main class="box_shadows bgcolor  scrollRightYDictMenu tableDict marginBottom">
@@ -321,13 +315,8 @@ export default {
       this.filters.page = this.pageRequest.pageNum
       // 每页显示数
       this.filters.limit = this.pageRequest.pageSize
+      this.loadingQuery = true
       this.$api.dict.findPage(this.filters).then(res => {
-        res.data.list.forEach(item => {
-          // 处理头像
-          // item.userimg = handleImagePath(item.userimg, true)
-          // 处理姓名，如果没有真实姓名，则用账号代替显示
-          item.userRealname = item.userRealname ? item.userRealname : item.username
-        })
         this.pageResult = res.data
         this.loadingQuery = false
       }).then(data != null ? data.callback : '')

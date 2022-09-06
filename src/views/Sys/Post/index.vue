@@ -54,7 +54,7 @@
           row-key="postId"
           @findPage="findPage"
           @toggleRowSelection="toggleRowSelection"
-          @selectionChange="selectionChange"
+          @selectionChange="handleSelectionChange"
           @handleEdit="handleEdit"
           @handleBatchDelete="handleBatchDelete"/>
       </el-main>
@@ -98,7 +98,9 @@ export default {
         { icon: 'fa fa-long-arrow-up', label: '上移', perms: 'sys:tsyspost:move', callback: 'handleMoveUp', moveType: 'moveUp', title: '修改排序号' },
         { icon: 'fa fa-long-arrow-down', label: '下移', perms: 'sys:tsyspost:move', callback: 'handleMoveDown', moveType: 'moveDown', title: '修改排序号' },
         { icon: 'fa fa-trash', label: '删除', perms: 'sys:tsyspost:remove', callback: 'handleDelete' }
-      ]
+      ],
+      // 表格中被选中的列数据
+      selections: []
     }
   },
   methods: {
@@ -125,7 +127,9 @@ export default {
     handleOk(data) {
       this.findPage()
     },
-    selectionChange() {},
+    handleSelectionChange(rows) {
+      this.selections = rows
+    },
     toggleRowSelection() {},
     handleDelete(row) {
       this.handleBatchDelete([row.postId])
