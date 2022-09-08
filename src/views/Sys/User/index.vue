@@ -2,7 +2,7 @@
   <div class="page-container" >
     <el-container class="page-container scrollAllY">
       <!-- 左侧区域 begin -->
-      <el-aside width="200px" class="box_shadows bgcolor LeftPadding marginBottom">
+      <el-aside width="240px" class="box_shadows bgcolor LeftPadding marginBottom">
         <div class="displayFlex marginBottom">
           <el-input
             v-model="filterLeftTree"

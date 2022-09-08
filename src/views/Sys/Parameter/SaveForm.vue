@@ -32,7 +32,7 @@
           <el-form-item label="显示方式 " prop="displaysort">
             <el-select v-model="dataForm.displaysort" clearable class="widthAll" placeholder="请选择">
               <el-option
-                v-for="item in queryFormDisplaySortOptionsTwo"
+                v-for="item in optionList"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
@@ -57,13 +57,13 @@
             <el-input v-model="dataForm.parano" maxlength="100" type="text" auto-complete="off" placeholder="参数值" clearable />
           </el-form-item>
           <el-form-item label="默认值" prop="isdefault">
-            <el-radio-group v-model="dataForm.isdefault" class=" textAlign widthAll">
-              <el-radio
-                v-for="data in dictDefaultList"
-                :label="data.value"
-                :key="data.value"
-                class="elRadioMargin">{{ data.label }}</el-radio>
-            </el-radio-group>
+            <cb-param
+              :parent-vue="_self"
+              :data-form="dataForm"
+              name="isdefault"
+              param="isdefault"
+              type="radio"
+            />
           </el-form-item>
           <el-form-item label="描述" prop="remark">
             <el-input v-model="dataForm.remark" :rows="1" auto-complete="off" maxlength="50" type="textarea" placeholder="描述" clearable />
@@ -155,7 +155,12 @@ export default {
         paraKey: [{ validator: validateName3, required: true, message: '参数key不能为空', trigger: 'blur' }],
         parano: [{ validator: validateName4, required: true, message: '参数值不能为空', trigger: 'blur' }]
       },
-      parentData: {}
+      parentData: {},
+      optionList: [
+        { value: '1', label: '下拉列表' },
+        { value: '2', label: '复选框' },
+        { value: '3', label: '单选按钮' }
+      ]
     }
   },
   methods: {
@@ -200,7 +205,7 @@ export default {
     },
     save(continueFlag) {
       const submitData = Object.assign({}, this.dataForm)
-      this.$api.dict.save(submitData).then((res) => {
+      this.$api.parameter.save(submitData).then((res) => {
         this.loading = false
         if (res.code === 0) {
           this.$message.success(res.msg)

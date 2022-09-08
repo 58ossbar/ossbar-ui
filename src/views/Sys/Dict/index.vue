@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-container class="page-container scrollAllY">
-      <el-aside width="220px" class="box_shadows bgcolor LeftPadding marginBottom">
+      <el-aside width="240px" class="box_shadows bgcolor LeftPadding marginBottom">
         <div class="displayFlex marginBottom">
           <el-input
             v-model="filterText"

@@ -29,3 +29,19 @@ export const view = (id) => {
     method: 'get'
   })
 }
+
+export const save = (data) => {
+  return axios({
+    url: '/api/sys/parameter/save',
+    method: 'post',
+    data
+  })
+}
+
+export const update = (data) => {
+  return axios({
+    url: '/api/sys/parameter/update',
+    method: 'post',
+    data
+  })
+}

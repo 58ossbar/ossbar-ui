@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-container class="page-container scrollAllY">
-      <el-aside width="220px" class="box_shadows bgcolor LeftPadding marginBottom">
+      <el-aside width="240px" class="box_shadows bgcolor LeftPadding marginBottom">
         <div class="displayFlex marginBottom">
           <el-input
             v-model="filterText"
@@ -176,12 +176,12 @@ export default {
       }).then(data != null ? data.callback : '')
     },
     handleAdd() {
-      const currData = this.$refs.dictTree.getCurrentNode()
-      if (currData == null) {
-        this.$message({ message: '请先在左侧选择一条目录再新增字典!', type: 'warning' })
-        return false
-      }
-      this.$refs.saveForm.handleAdd(currData)
+      // const currData = this.$refs.dictTree.getCurrentNode()
+      // if (currData == null) {
+      //   this.$message({ message: '请先在左侧选择一条目录再新增字典!', type: 'warning' })
+      //   return false
+      // }
+      this.$refs.saveForm.handleAdd()
     },
     handleEdit(row) {
       this.$refs.saveForm.handleEdit(row, this.dataLeftTree)
