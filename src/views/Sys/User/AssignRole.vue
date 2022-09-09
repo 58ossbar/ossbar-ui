@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-dialogDrag
-    :title="$t('action.assignUsers')"
+    :title="$t('action.assignRoles')"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
     width="50%"
@@ -27,80 +27,7 @@
       label-width="100px"
       style="display: flex"
     >
-      <div style="width: 28%; box-shadow: 1px 1px 3px rgba(0,0,0,0.5);border-radius: 6px;padding: 10px;margin:0px 10px 10px 10px;">
-        <!--过滤输入框-->
-        <el-input
-          v-model="filterTextForSetRoleUser"
-          size="small"
-          placeholder="请输入机构名称进行过滤"
-          style="margin: 10px 0px;"/>
-        <!--分配用户中的机构树-->
-        <!--  check-strictly -->
-        <el-tree
-          ref="orgTreeForSetRoleUser"
-          :data="orgTreeData"
-          :props="{id: 'orgId', label: 'orgName'}"
-          :default-expanded-keys="defaultExpandedKeysForOrgTree"
-          :filter-node-method="filterNodeForSetRoleUser"
-          style="margin-top: 10px; height: 330px;"
-          class="filter-tree cb-el-tree-scroll"
-          show-checkbox
-          highlight-current
-          node-key="orgId"
-          accordion
-          @check="handleNodecheckForSetRoleUser"/>
-      </div>
-      <div style="width: 80%; box-shadow: 1px 1px 3px rgba(0,0,0,0.5);border-radius: 6px;padding: 10px;margin:0px 10px 10px 10px;">
-        <div style="height: 90%;margin-top: 10px;">
-          <el-form :inline="true" :model="filtersUser" :size="size" class="toolbarinput">
-            <el-form-item>
-              <el-tooltip class="item" effect="dark" content="全选用户列表" placement="bottom">
-                <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
-              </el-tooltip>
-            </el-form-item>
-            <el-form-item>
-              <el-autocomplete
-                ref="inputForUserRealname"
-                v-model="filtersUser.userRealname"
-                :fetch-suggestions="querySearch"
-                :select-when-unmatched="true"
-                class="inline-input"
-                placeholder="请输入或选择用户姓名查询"
-                clearable
-                @select="handleSelect"
-                @keyup.enter.native="keyupEnterForInputUserRealName"
-                @keyup.delete.native="keyupDeleteForInputUserRealName"
-                @keyup.space.native="keyupSpaceForInputUserRealName"
-              />
-            </el-form-item>
-          </el-form>
-          <div id="cb-el-checkbox-group" ref="userImgList" style="overflow:auto; height:330px;overflow-x:hidden;">
-            <el-checkbox-group v-model="checkboxGroup" @change="handleCheckedUserListChange">
-              <el-checkbox
-                v-for="user in userList"
-                :label="user.userId"
-                :key="user.userId"
-                :title="'姓名:'+user.userRealname"
-                border
-                size="medium"
-                style="width:90px; height:90px; margin: 5px;overflow: hidden">
-                {{ user.userRealname }}<img :src="user.userimg" style="width:40px; height:40px; border-radius: 50%; float: left; margin-top: 12px;" >
-              </el-checkbox>
-            </el-checkbox-group>
-          </div>
-        </div>
-        <!-- 分页区域 -->
-        <div style="margin-top: 10px;">
-          <el-pagination
-            :current-page="myParams.pageNum"
-            :page-sizes="[50, 100, 150, 200]"
-            :page-size="myParams.pageSize"
-            :total="totalCount"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"/>
-        </div>
-      </div>
+      TODO
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button :size="size" @click="dialogVisible = false">{{ $t('action.cancel') }}</el-button>
