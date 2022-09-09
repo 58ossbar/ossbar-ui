@@ -15,20 +15,23 @@
           <cb-button
             class="queryButtonPlus"
             icon="el-icon-plus"
-            perms="sys:tsysdict:add"
+            perms="sys:tsysorg:add"
             type="primary"
-            @click="handleAdd()"/>
+            @click="handleAdd"/>
         </div>
         <el-tree
           v-loading="loadingTree"
-          ref="dictTree"
+          v-if="listData.length > 0"
+          ref="deptTree"
           :data="listData"
           :highlight-current="true"
+          :expand-on-click-node="false"
           :props="{label: 'orgName', children: 'children'}"
           :element-loading-text="$t('action.loading')"
           :filter-node-method="filterNode"
-          node-key="dictId"
-          current-node-key="" >
+          :current-node-key="listData[0].orgId"
+          :default-expanded-keys="defaultExpandedKeys"
+          node-key="orgId" >
           <div
             slot-scope="{ node, data }"
             :class="{displayColor:!data.swithToggle}"
@@ -109,6 +112,145 @@
             <el-col :span="24">
               <span class="deptInfoSpan">
                 {{ !dataForm.orgId ? $t('action.add')+'机构' : (!dataForm.formState?$t('action.edit')+'机构':$t('action.readOnly')+'机构') }}</span>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-collapse v-model="activeName">
+              <el-collapse-item name="one">
+                <template slot="title">
+                  <el-button type="primary" class="collapseItemHr" />基本信息
+                </template>
+                <el-row class="el_row_width">
+                  <el-col :span="24">
+                    <el-form-item label="机构类型" prop="orgType" >
+                      <el-radio-group v-model="dataForm.orgType">
+                        <el-radio
+                          v-for="data in menuTypeList"
+                          :label="data.value"
+                          :key="data.value"
+                          class="elRadioMargin" >{{ data.label }}</el-radio>
+                      </el-radio-group>
+                    </el-form-item>
+                  </el-col>
+
+                </el-row>
+                <el-row class="el_row_width" >
+                  <el-col :span="12">
+                    <el-form-item label="机构名称" prop="orgName" >
+                      <el-input
+                        v-model="dataForm.orgName"
+                        placeholder="机构名称"
+                        maxlength="50"
+                        type="text"
+                        clearable
+                        @blur="blurInputName"/>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item v-show="dataForm.parentId!=='-1' || !dataForm.formState" label="所属机构" prop="parentName">
+                      <cb-tree
+                        :parent-vue="_self"
+                        :data-form="dataForm"
+                        :prop="{id: 'orgId', name: 'orgName'}"
+                        :disabled="dataForm.formState"
+                        url="/api/sys/org/getOrgTree"
+                        placeholder="请选择所属机构"
+                        name="parentId"
+                        default-expanded-level="1"
+                      />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row class="el_row_width">
+                  <el-col :span="12">
+                    <el-form-item label="机构简称" prop="orgShowname" >
+                      <el-input
+                        v-model="dataForm.orgShowname"
+                        placeholder="机构简称"
+                        maxlength="50"
+                        type="text"
+                        clearable/>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="全拼" prop="qp" >
+                      <el-input v-model="dataForm.qp" placeholder="机构名称全拼" readonly clearable/>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row class="el_row_width">
+                  <el-col :span="12">
+                    <el-form-item label="行政区码" prop="orgXzqm" >
+                      <el-input v-model="dataForm.orgXzqm" placeholder="行政区码" maxlength="19" type="text" clearable/>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="简拼" prop="jp" >
+                      <el-input v-model="dataForm.jp" placeholder="机构名称简拼" readonly clearable/>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="是否启用" prop="swithToggle" >
+                      <el-switch v-model="dataForm.swithToggle" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-collapse-item>
+              <el-collapse-item name="two">
+                <template slot="title">
+                  <el-button type="primary" class="collapseItemHr" />更多信息
+                </template>
+                <el-row class="el_row_width">
+                  <el-col :span="12">
+                    <el-form-item label="通讯地址" prop="addr" >
+                      <el-input v-model="dataForm.addr" placeholder="通讯地址" maxlength="100" type="text" clearable/>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="邮政编码" prop="zip" >
+                      <el-input v-model="dataForm.zip" placeholder="邮政编码" maxlength="10" type="text" clearable/>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row class="el_row_width">
+                  <el-col :span="12">
+                    <el-form-item label="机构负责人" prop="leader" >
+                      <el-input v-model="dataForm.leader" placeholder="机构负责人" maxlength="16" type="text" clearable/>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="负责人手机号码" prop="mobile" >
+                      <el-input v-model="dataForm.mobile" placeholder="负责人手机号码" maxlength="14" type="text" clearable/>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row class="el_row_width">
+                  <el-col :span="12">
+                    <el-form-item label="办公电话" prop="phone" >
+                      <el-input v-model="dataForm.phone" placeholder="办公电话" maxlength="30" type="text" clearable/>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="电子邮箱" prop="email" >
+                      <el-input v-model="dataForm.email" placeholder="电子邮箱" maxlength="100" type="text" clearable/>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-collapse-item>
+            </el-collapse>
+          </el-row>
+          <el-row v-if="!dataForm.formState" class="elDeptFormButton">
+            <!-- 操作按钮-->
+            <el-col :span="24">
+              <el-button size="mini" type="primary" icon="el-icon-circle-close" @click="handleCancel" >
+                {{ $t('action.cancel') }}
+              </el-button>
+              <el-button size="mini" type="primary" icon="el-icon-circle-plus-outline" @click="submitForm(true)" >
+                {{ $t('action.saveContinue') }}
+              </el-button>
+              <el-button size="mini" type="primary" icon="el-icon-circle-check" @click="submitForm" >
+                {{ $t('action.preservation') }}
+              </el-button>
             </el-col>
           </el-row>
         </el-form>
@@ -224,8 +366,44 @@ export default {
       loadingTree: false,
       // 树数据
       listData: [],
+      defaultExpandedKeys: [],
       // 表单数据
-      dataForm: {},
+      dataForm: {
+        orgId: null, // 机构ID
+        orgSn: null, //	机构排序ID
+        orgName: null, // 机构名称
+        orgCode: null, // 机构编号
+        orgXzqm: null, // 行政区码
+        orgShowname: null, // 机构显示名称
+        parentId: null, // 父机构ID
+        parentName: null, // 父机构名称
+        layer: null, // 层（阶次）
+        remark: null, // 单位简介
+        orgType: '0', // 机构类型:0、部门 1、公司
+        addr: null, // 通讯地址
+        zip: null, // 邮政编码
+        email: null, // 电子邮箱
+        leader: null, // 机构负责人
+        phone: null, // 办公电话
+        fax: null, // 传真号码
+        state: '1', //	状态:1有效 2、停用
+        mobile: null, // 负责人手机号码
+        jp: null, // 简拼
+        qp: null, // 全拼
+        ancestry: null, // 排序
+        createUserId: null,
+        createTime: null,
+        updateUerId: null,
+        updateTime: null,
+        coverPic: null, // 封面图
+        description: null, // 机构描述
+        collegeCode: null, // 学院代码
+        majorCode: null, // 专业代码
+        swithToggle: true,
+        formState: false,
+        ulStyle: true,
+        iconStyleI: true
+      },
       dataRule: {
         orgName: [{ validator: validateOrgName, required: true, message: '机构名称不能为空', trigger: 'blur' }],
         orgShowname: [{ validator: validateOrgShowname, required: true, message: '机构简称不能为空', trigger: 'blur' }],
@@ -234,18 +412,28 @@ export default {
         phone: [{ validator: validatePhone, trigger: 'blur' }],
         email: [{ validator: validateEmail, trigger: 'blur' }],
         zip: [{ validator: validateZip, trigger: 'blur' }]
-        /*, jp: [{ required: true, message: "简拼不能为空", trigger: "blur" }],
-          qp: [{ required: true, message: '全拼不能为空', trigger: 'blur' }]*/
-      }// 表单提交规则
+      },
+      activeName: ['one'],
+      menuTypeList: [
+        { value: '0', label: '公司' },
+        { value: '1', label: '部门' }
+      ]
     }
   },
   watch: {
     filterText(val) {
-      this.$refs.dictTree.filter(val)
+      this.$refs.deptTree.filter(val)
     }
   },
   mounted() {
     this.findTreeData()
+    this.$nextTick(function() {
+      if (!this.dataForm.formState) {
+        this.activeName = ['one', 'two']
+      } else {
+        this.activeName = ['one']
+      }
+    })
   },
   methods: {
     filterNode(value, data) {
@@ -253,10 +441,12 @@ export default {
       return data.orgName.indexOf(value) !== -1
     },
     handleSelectDeptTree(data) {
-      this.filters.parentType = data.dictId
-      this.findPage()
+      if (this.$refs['dataForm']) {
+        this.$refs['dataForm'].clearValidate()
+      }
+      this.dataForm = Object.assign({}, data)
     },
-    findTreeData(dictId) {
+    findTreeData(orgId) {
       this.loadingTree = true
       this.$api.dept.findTree().then(res => {
         this.loadingTree = false
@@ -265,10 +455,16 @@ export default {
             this.handleItem(item)
           })
           this.listData = res.data
+          // 默认回显第一个数据
+          Object.assign(this.dataForm, this.listData[0])
           // 选中指定节点
           this.$nextTick(() => {
-            if (dictId) {
-              this.$refs.dictTree.setCurrentKey(dictId)
+            if (orgId) {
+              this.$refs.deptTree.setCurrentKey(orgId)
+            } else {
+              if (this.listData.length) {
+                this.$refs.deptTree.setCurrentKey(this.listData[0].orgId)
+              }
             }
           })
         }
@@ -285,22 +481,54 @@ export default {
         })
       }
     },
-    handleAdd() {
-      const currData = this.$refs.dictTree.getCurrentNode()
-      if (currData == null) {
-        this.$message({ message: '请先在左侧选择一条目录再新增字典!', type: 'warning' })
-        return false
+    handleAdd(data) {
+      if (this.$refs['dataForm']) {
+        this.$refs['dataForm'].clearValidate()
       }
-      this.$refs.saveForm.handleAdd(currData)
+      if (!this.dataForm.formState) {
+        this.activeName = ['one', 'two']
+      } else {
+        this.activeName = ['one']
+      }
+      this.operation = true
+      this.resetFormDatas()
+      if (data && data.orgId) {
+        this.dataForm.parentId = data.orgId
+        this.dataForm.parentName = data.orgName
+      } else {
+        const node = this.$refs.deptTree.getCurrentNode()
+        if (node !== null) {
+          this.dataForm.parentId = node.parentId
+        }
+      }
     },
-    handleEdit(row) {
-      this.$refs.saveForm.handleEdit(row, this.dataLeftTree)
+    handleEdit(data) {
+      if (this.$refs['dataForm']) {
+        this.$refs['dataForm'].clearValidate()
+      }
+      this.operation = false
+      this.activeName = ['one', 'two']
+      if (data.orgId) {
+        this.dataForm = Object.assign({}, data)
+        this.dataForm.formState = false
+        this.dataFormOlder = Object.assign({}, this.dataForm)
+      } else {
+        const datas = this.$refs.deptTree.getCurrentNode()
+        if (datas === null) {
+          this.$message({ message: '请先选择一条记录', type: 'warning' })
+          return
+        } else {
+          this.dataForm = Object.assign({}, datas)
+          this.dataForm.formState = false
+          this.dataFormOlder = Object.assign({}, this.dataForm)
+        }
+      }
     },
     handleOk(data) {
       this.findPage()
     },
     handleDelete(row) {
-      this.handleBatchDelete([row.dictId])
+      this.handleBatchDelete([row.orgId])
     },
     handleBatchDelete(ids) {
       if (!ids || !ids.length) {
@@ -310,21 +538,57 @@ export default {
         type: 'warning',
         closeOnClickModal: false
       }).then(() => {
-        this.$api.dict.batchDelete(ids).then(res => {
+        this.$api.dept.batchDelete(ids).then(res => {
           if (res.code !== 0) {
             this.$message.error(res.msg)
           } else {
             this.$message({ message: '操作成功', type: 'success' })
             this.findTreeData()
-            this.filters.parentType = ''
-            this.findPage()
           }
-        }).catch(() => {
-          this.$message({ type: 'error', message: '删除失败,接口异常' })
+        }).catch((e) => {
+          this.$message({ type: 'error', message: '删除失败' })
         })
       }).catch(() => {
         this.$message({ type: 'info', message: '删除未成功' })
       })
+    },
+    resetFormDatas() {
+      this.dataForm = {
+        orgId: null, // 机构ID
+        orgSn: null, //	机构排序ID
+        orgName: null, // 机构名称
+        orgCode: null, // 机构编号
+        orgXzqm: null, // 行政区码
+        orgShowname: null, // 机构显示名称
+        parentId: null, // 父机构ID
+        parentName: null, // 父机构名称
+        layer: null, // 层（阶次）
+        remark: null, // 单位简介
+        orgType: '0', // 机构类型:0、部门 1、公司
+        addr: null, // 通讯地址
+        zip: null, // 邮政编码
+        email: null, // 电子邮箱
+        leader: null, // 机构负责人
+        phone: null, // 办公电话
+        fax: null, // 传真号码
+        state: '1', //	状态:1有效 2、停用
+        mobile: null, // 负责人手机号码
+        jp: null, // 简拼
+        qp: null, // 全拼
+        ancestry: null, // 排序
+        createUserId: null,
+        createTime: null,
+        updateUerId: null,
+        updateTime: null,
+        coverPic: null, // 封面图
+        description: null, // 机构描述
+        collegeCode: null, // 学院代码
+        majorCode: null, // 专业代码
+        swithToggle: true,
+        formState: false,
+        ulStyle: true,
+        iconStyleI: true
+      }
     },
     mouseenters: function(data) {
       data.iconStyleI = false
@@ -337,6 +601,113 @@ export default {
     },
     mouseleave: function(data) {
       data.ulStyle = true
+    },
+    submitForm(continueFlag) {
+      this.$refs.dataForm.validate((valid) => {
+        if (valid) {
+          this.$confirm('确认提交吗？', '提示', { closeOnClickModal: false, type: 'warning' }).then(() => {
+            this.loading = true
+            if (this.operation) {
+              this.save(continueFlag)
+            } else {
+              this.update()
+            }
+          }).catch(() => {
+            this.loading = false
+          })
+        }
+      })
+    },
+    save(continueFlag) {
+      const submitData = Object.assign({}, this.dataForm)
+      this.$api.dept.save(submitData).then((res) => {
+        this.loading = false
+        if (res.code === 0) {
+          this.handleItem(res.data)
+          if (submitData.orgId) {
+            const previousSibling = this.$refs.deptTree.getNode(res.data.orgId).previousSibling
+            const nextSibling = this.$refs.deptTree.getNode(res.data.orgId).nextSibling
+            this.$refs.deptTree.remove(this.$refs.deptTree.getNode(res.data.orgId))
+            if (previousSibling) {
+              this.$refs.deptTree.insertAfter(res.data, previousSibling.data)
+            } else if (nextSibling) {
+              this.$refs.deptTree.insertBefore(res.data, nextSibling.data)
+            }
+          } else {
+            if (res.data.parentId === '-1') {
+              this.$refs.deptTree.append(res.data)
+            } else {
+              this.$refs.deptTree.append(res.data, this.$refs.deptTree.getNode(res.data.parentId).data)
+            }
+          }
+          // 展开节点
+          this.defaultExpandedKeys = [res.data.parentId]
+          // 选中当前新节点
+          this.$nextTick(() => {
+            this.$refs.deptTree.setCurrentKey(res.data.orgId)
+          })
+          this.dataForm = Object.assign({}, res.data)
+          this.$message.success(res.msg)
+          if (typeof continueFlag === 'boolean') {
+            this.resetFormDatas()
+          } else {
+            this.dialogVisible = false
+          }
+          this.$emit('ok', submitData)
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+    update() {
+      const submitData = Object.assign({}, this.dataForm)
+      this.$api.dept.update(submitData).then((res) => {
+        this.loading = false
+        if (res.code === 0) {
+          this.$message.success(res.msg)
+          this.resetFormDatas()
+          this.dialogVisible = false
+          this.$emit('ok', submitData)
+        } else {
+          this.$message.error(res.msg)
+        }
+      }).catch(() => {
+        this.$message.error('接口调用失败')
+        this.loading = false
+      })
+    },
+    handleCancel: function() {
+      if (this.$refs['dataForm']) {
+        this.$refs['dataForm'].clearValidate()
+      }
+      if (this.dataForm.orgId) {
+        this.dataForm = Object.assign({}, this.dataFormOlder)
+      } else {
+        const datas = this.$refs.deptTree.getCurrentNode()
+        if (datas === null) {
+          this.dataForm = Object.assign({}, this.tableTreeDdata[0])
+        } else {
+          this.dataForm = Object.assign({}, datas)
+        }
+      }
+      this.prop = this.dataForm.parentName
+      this.dataForm.formState = true
+      if (this.dataForm.formState) {
+        this.activeName = ['one', 'two']
+      } else {
+        this.activeName = ['one']
+      }
+    },
+    // 输入名称获取全拼和简拼
+    blurInputName: function() {
+      this.$api.dept.findDeptPingYing({ hz: this.dataForm.orgName }).then(res => {
+        if (res.data) {
+          this.dataForm.qp = res.data.qp
+          this.dataForm.jp = res.data.jp
+        }
+      })
     }
   }
 }
