@@ -1,5 +1,17 @@
 import axios from '@/http/axios'
 
+/**
+ * 获取菜单
+ * @param {*} params
+ * @returns
+ */
+export const queryPerms = (params) => {
+  return axios({
+    url: '/api/sys/resource/perms',
+    method: 'get',
+    params
+  })
+}
 /*
  * 菜单管理模块
  */
