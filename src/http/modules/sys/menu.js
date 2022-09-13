@@ -3,31 +3,50 @@ import axios from '@/http/axios'
 /*
  * 菜单管理模块
  */
-
+// 生成
+export const init = (data) => {
+  if (data) {
+    return axios({
+      url: '/api/sys/resource/init/' + data,
+      method: 'post',
+      data
+    })
+  }
+}
+// 树拖拽
+export const updateDrag = (data) => {
+  return axios({
+    url: '/api/sys/resource/drag',
+    method: 'post',
+    data
+  })
+}
+// 树上下移
+export const move = (data) => {
+  return axios({
+    url: '/api/sys/resource/clickDrag',
+    method: 'post',
+    data
+  })
+}
 // 保存
 export const save = (data) => {
   return axios({
-    url: '/menu/save',
+    url: '/api/sys/resource/saveOrUpdate',
     method: 'post',
     data
   })
 }
 // 删除
 export const batchDelete = (data) => {
-  return axios({
-    url: '/menu/delete',
-    method: 'post',
-    data
-  })
+  if (data) {
+    return axios({
+      url: '/api/sys/resource/delete/' + data,
+      method: 'delete'
+    })
+  }
 }
 // 查找导航菜单树
-/* export const findNavTree = (params) => {
-    return axios({
-        url: '/api/menu/findNavTree',
-        method: 'get',
-        params
-    })
-}*/
 export const findNavTree = (params) => {
   return axios({
     url: '/api/menu/findNavTree',
@@ -35,31 +54,20 @@ export const findNavTree = (params) => {
     params
   })
 }
-// 查找菜单树
-export const findMenuTree = () => {
-  return axios({
-    url: '/menu/findMenuTree',
-    method: 'get'
-  })
-}
 
-/**
- * 获取菜单
- * @param {*} params
- * @returns
- */
-export const queryPerms = (params) => {
+// 查找菜单树
+export const findMenuTree = (params) => {
   return axios({
-    url: '/api/sys/resource/perms',
+    url: '/api/sys/resource/query',
     method: 'get',
     params
   })
 }
-
-// 根据menuId获取子数据
-export const findMenuTreeByMenuId = () => {
+// 查找显示的菜单树
+export const findMenuTreeShow = (params) => {
   return axios({
-    url: '/menu/findMenuTreeByMenuId',
-    method: 'get'
+    url: '/api/sys/resource/queryLinkDisplay',
+    method: 'get',
+    params
   })
 }
