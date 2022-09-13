@@ -147,8 +147,10 @@
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">
-                    <el-form-item v-show="dataForm.parentId!=='-1' || !dataForm.formState" label="所属机构" prop="parentName">
+                    <el-form-item v-show="dataForm.parentId!=='-1' || !dataForm.formState" label="父级机构" prop="parentId">
+                      {{ dataForm.parentId }}
                       <cb-tree
+                        ref="orgTree"
                         :parent-vue="_self"
                         :data-form="dataForm"
                         :prop="{id: 'orgId', name: 'orgName'}"
@@ -256,20 +258,16 @@
         </el-form>
       </el-main>
     </el-container>
-    <!-- 新增修改字典界面 -->
-    <SaveForm ref="saveForm" @ok="handleOk" />
   </div>
 </template>
 
 <script>
 import CbTable from '@/views/Core/CbTable'
 import CbButton from '@/views/Core/CbButton'
-import SaveForm from './SaveForm.vue'
 export default {
   components: {
     CbTable,
-    CbButton,
-    SaveForm
+    CbButton
   },
   data() {
     var validateOrgName = (rule, value, callback) => {
@@ -391,10 +389,6 @@ export default {
         jp: null, // 简拼
         qp: null, // 全拼
         ancestry: null, // 排序
-        createUserId: null,
-        createTime: null,
-        updateUerId: null,
-        updateTime: null,
         coverPic: null, // 封面图
         description: null, // 机构描述
         collegeCode: null, // 学院代码
@@ -493,8 +487,8 @@ export default {
       this.operation = true
       this.resetFormDatas()
       if (data && data.orgId) {
+        // this.$set(this.dataForm, 'parentId', data.orgId)
         this.dataForm.parentId = data.orgId
-        this.dataForm.parentName = data.orgName
       } else {
         const node = this.$refs.deptTree.getCurrentNode()
         if (node !== null) {
@@ -528,9 +522,9 @@ export default {
       this.findPage()
     },
     handleDelete(row) {
-      this.handleBatchDelete([row.orgId])
+      this.handleBatchDelete([row.orgId], row)
     },
-    handleBatchDelete(ids) {
+    handleBatchDelete(ids, data) {
       if (!ids || !ids.length) {
         return false
       }
@@ -543,7 +537,15 @@ export default {
             this.$message.error(res.msg)
           } else {
             this.$message({ message: '操作成功', type: 'success' })
-            this.findTreeData()
+            // this.findTreeData()
+            if (data.parentId !== '-1') {
+              this.dataForm = Object.assign({}, this.$refs.deptTree.getNode(data.parentId).data)
+              this.$refs.deptTree.setCurrentKey(data.parentId)
+            } else {
+              this.dataForm = Object.assign({}, this.$refs.deptTree.getNode(this.tableTreeDdata[0].orgId).data)
+              this.$refs.deptTree.setCurrentKey(this.tableTreeDdata[0].orgId)
+            }
+            this.$refs.deptTree.remove(this.$refs.deptTree.getNode(data.orgId))
           }
         }).catch((e) => {
           this.$message({ type: 'error', message: '删除失败' })
@@ -623,6 +625,9 @@ export default {
       this.$api.dept.save(submitData).then((res) => {
         this.loading = false
         if (res.code === 0) {
+          // 重新刷新下树组件的数据
+          this.$refs.orgTree.queryTree()
+          // 处理下
           this.handleItem(res.data)
           if (submitData.orgId) {
             const previousSibling = this.$refs.deptTree.getNode(res.data.orgId).previousSibling
