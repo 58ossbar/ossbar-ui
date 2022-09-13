@@ -83,3 +83,29 @@ export const resetPassword = (data) => {
     data
   })
 }
+
+/**
+ * 获取已分配的角色
+ * @param {*} data
+ * @returns
+ */
+export const toGrantRole = (data) => {
+  return axios({
+    url: '/api/sys/user/toGrantRole',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 分配角色
+ * @param {*} params
+ * @returns
+ */
+export const grantRole = (data) => {
+  return axios({
+    url: '/api/sys/user/grantRole',
+    method: 'post',
+    data
+  })
+}

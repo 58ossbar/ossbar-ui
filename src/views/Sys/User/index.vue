@@ -296,15 +296,16 @@ export default {
         this.$message({ message: '请先在表格中，至少选择一个用户', type: 'warning' })
         return false
       }
-      let count = 0
-      for (let i = 0; i < this.selections.length; i++) {
-        if (Number(this.selections[i].status) === 1) {
-          count++
-        }
-      }
-      if (count !== this.selections.length) {
-        this.$message({ message: '不能给禁用的用户分配角色!', type: 'warning' })
-      }
+      // let count = 0
+      // for (let i = 0; i < this.selections.length; i++) {
+      //   if (Number(this.selections[i].status) === 1) {
+      //     count++
+      //   }
+      // }
+      // if (count !== this.selections.length) {
+      //   this.$message({ message: '不能给禁用的用户分配角色!', type: 'warning' })
+      //   return false
+      // }
       // 去打开界面
       this.$refs.assignRole.handleAssignRole(this.selections, this.$refs.table)
     },
