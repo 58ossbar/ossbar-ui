@@ -146,8 +146,7 @@
                         class="avatar-uploader dictUPloadWidth"
                         name="icon"
                         with-credentials>
-                        <img v-if="form.imageUrlBack" :src="form.imageUrlBack" class="avatar"> <!-- -->
-                        <!--<i v-else class="el-icon-upload avatar-uploader-icon"></i>-->
+                        <img v-if="form.imageUrlBack" :src="form.imageUrlBack" class="avatar">
                         <img
                           v-else
                           src="../../assets/my/upload.png"
@@ -246,6 +245,7 @@ import { hasPermission } from '@/permission/index.js'
 import { baseUrl } from '../../utils/global'
 import TableColumnFilterDialog from './TableColumnFilterDialog'
 import Cookies from 'js-cookie'
+import { handleImagePath } from '@/utils/util'
 export default {
   name: 'PersonalPanel',
   components: {
@@ -311,7 +311,7 @@ export default {
     }
     return {
       uploadImgIsOk: true,
-      actionUrl: baseUrl + '/api/sys/user/upload',
+      actionUrl: baseUrl + '/api/cbupload/uploadPic?type=2',
       uploadAddrLogo: '',
       uploadAddrBackImg: '',
       dataUser: {
@@ -421,11 +421,11 @@ export default {
     },
     changeInfo: function() {
       if (this.form.phone) {
-        const jj = {
+        const submitData = {
           settingId: this.form.infoId,
           settingValue: this.form.info
         }
-        this.$api.settings.save(jj).then((res) => {
+        this.$api.settings.update(submitData).then((res) => {
           if (res.code === 0) {
             this.$message({ message: '操作成功', type: 'success' })
           } else {
@@ -436,11 +436,11 @@ export default {
     },
     changePhone: function() {
       if (this.form.phone) {
-        const jj = {
+        const submitData = {
           settingId: this.form.phoneId,
           settingValue: this.form.phone
         }
-        this.$api.settings.save(jj).then((res) => {
+        this.$api.settings.update(submitData).then((res) => {
           if (res.code === 0) {
             this.$message({ message: '操作成功', type: 'success' })
           } else {
@@ -451,11 +451,11 @@ export default {
     },
     changeSxName: function() {
       if (this.form.sxName) {
-        const jj = {
+        const submitData = {
           settingId: this.form.sxNameId,
           settingValue: this.form.sxName
         }
-        this.$api.settings.save(jj).then((res) => {
+        this.$api.settings.update(submitData).then((res) => {
           if (res.code === 0) {
             this.$message({ message: '操作成功', type: 'success' })
           } else {
@@ -491,11 +491,13 @@ export default {
             const params = Object.assign({}, this.dataForm)
             params.attachId = this.attachId
             params.username = sessionStorage.getItem('user')
-            this.$api.user.save(params).then((res) => {
+            this.$api.user.update(params).then((res) => {
               if (res.code === 0) {
                 this.$message({ message: '操作成功', type: 'success' })
                 this.dialogVisible = false
-                this.$emit('changeUserImg', baseUrl + '/uploads/sys-user-img/' + this.dataForm.userimg)
+                if (res.data.userimg) {
+                  this.$emit('changeUserImg', handleImagePath(res.data.userimg))
+                }
                 this.$refs['dataForm'].resetFields()
               } else {
                 this.$message({ message: '操作失败, ' + res.msg, type: 'error' })
@@ -534,8 +536,9 @@ export default {
     // 显示账户管理界面
     showDiglog: function() {
       this.dialogVisible = true
-      this.$api.user.findView(sessionStorage.getItem('userId')).then((res) => {
-        this.imageUrl = baseUrl + '/uploads/sys-user-img/' + res.data.userimg
+      this.$api.user.view(sessionStorage.getItem('userId')).then((res) => {
+        res.data.userimg = handleImagePath(res.data.userimg, true)
+        this.imageUrl = res.data.userimg
         this.dataForm.nation = res.data.nation
         this.dataForm.zip = res.data.zip
         this.dataForm.userId = res.data.userId

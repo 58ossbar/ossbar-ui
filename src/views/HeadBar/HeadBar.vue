@@ -64,6 +64,7 @@ import NoticePanel from '@/views/Core/NoticePanel'
 import MessagePanel from '@/views/Core/MessagePanel'
 import PersonalPanel from '@/views/Core/PersonalPanel'
 import { baseUrl } from '../../utils/global'
+import { handleImagePath } from '@/utils/util'
 export default {
   components: {
     Hamburger,
@@ -105,11 +106,7 @@ export default {
     if (user) {
       this.user.name = user
       this.user.userRealname = sessionStorage.getItem('userRealname')
-      if (userimg === 'null' || userimg == null || userimg === '') {
-        this.user.avatar = require('@/assets/user.png')
-      } else {
-        this.user.avatar = baseUrl + '/uploads/sys-user-img/' + userimg
-      }
+      this.user.avatar = handleImagePath(userimg)
     }
     $('.headbar .el-menu-item.is-active > div > i').css('color', '#ffd04b')
   },
@@ -131,7 +128,7 @@ export default {
     // 替换头像
     changeUserImg: function(data) {
       this.user.avatar = data
-      sessionStorage.setItem('userimg', data.split('sys-user-img/')[1])
+      sessionStorage.setItem('userimg', data)
     },
     // 折叠导航栏
     onCollapse: function() {
