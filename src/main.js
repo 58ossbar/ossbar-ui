@@ -23,7 +23,7 @@ Vue.prototype.global = global
 import CbDict from '@/components/CbDict'
 import CbParam from '@/components/CbParam'
 import CbUpload from '@/components/CbUpload'
-// import CbEditor from '@/components/cb-editor'
+import CbEditor from '@/components/CbEditor/index'
 import CbTree from '@/components/CbTree'
 import CbTreePanel from '@/components/CbTreePanel'
 import CbTabels from '@/components/CbTables'
@@ -32,7 +32,7 @@ const components = [
   CbDict,
   CbParam,
   CbUpload,
-  // CbEditor,
+  CbEditor,
   CbTreePanel,
   CbTree,
   CbTabels,

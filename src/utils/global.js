@@ -10,7 +10,7 @@ export const appNames = '实训云平台'
 // token名称
 export const tokenKeyName = 'token'
 // 域名
-export const domain = process.env.domain
+export const evglUrl = process.env.evglUrl
 // 后台管理系统服务器地址
 export const baseUrl = process.env.baseUrl
 // 系统数据备份还原服务器地址
@@ -19,7 +19,7 @@ export const backupBaseUrl = 'http://ip:8002'
 export const interfaceFailMessage = '接口调用失败'
 
 export default {
-  domain,
+  evglUrl,
   baseUrl,
   backupBaseUrl
 }

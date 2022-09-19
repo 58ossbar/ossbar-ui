@@ -1,6 +1,6 @@
 'use strict'
 module.exports = {
   NODE_ENV: '"test"',
-  domain: '"https://ip.com"',
-  baseUrl: '"https://ip/mgr"'
+  evglUrl: '"https://frp.creatorblue.com/evglui/#/"',
+  baseUrl: '"https://frp.creatorblue.com/mgr"'
 }

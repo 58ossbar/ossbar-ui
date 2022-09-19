@@ -550,3 +550,13 @@ ul{
   display: none;
 }
 /* 公众号 资讯 编辑  上下移 面板 end */
+
+
+/* tinymce 编辑器样式 begin */
+.tox-tinymce-aux{
+  z-index: 3000 !important;
+}
+.tox .tox-tbtn--bespoke .tox-tbtn__select-label{
+  width: 90px !important;
+}
+/* tinymce 编辑器样式 end */

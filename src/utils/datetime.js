@@ -30,3 +30,20 @@ export function formatWithSeperator(datetime, dateSeprator, timeSeprator) {
     return timeFormat
   }
 }
+
+/**
+ * 获取指定日期，且返回格式为 yyyy-MM-dd
+ * @param dateTime
+ */
+export function getYearMonthDay(dateTime) {
+  if (!dateTime) {
+    dateTime = new Date()
+  }
+  const dateMat = new Date(dateTime)
+  const year = dateMat.getFullYear()
+  let month = dateMat.getMonth() + 1
+  let day = dateMat.getDate()
+  month = Number(month) < 10 ? '0' + month : month
+  day = Number(day) < 10 ? '0' + day : day
+  return year + '-' + month + '-' + day
+}

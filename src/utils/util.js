@@ -2,6 +2,58 @@
 import { baseUrl } from '@/utils/global'
 
 /**
+ * 设置某些属性，如id,name, 以便其它方法使用
+ * @param id 数据库中的主键ID
+ * @param name 名称
+ * @param data 原生数据
+ * @param parentId 父ID
+ * @param parentName 父名称
+ * @returns {*}
+ */
+export function setDataProperties(id, name, data, parentId, parentName) {
+  if (data.length > 0) {
+    data.forEach((obj, i) => {
+      obj.id = obj[id]
+      obj.cbid = obj[id]
+      obj.name = obj[name]
+      obj.label = obj[name]
+      if (parentId != undefined && parentId != null && parentId != '') {
+        obj.parentId = obj[parentId]
+      } else if (parentName != undefined && parentName != null && parentName != '') {
+        obj.parentName = obj[parentName]
+      }
+    })
+  }
+  return data
+}
+
+/**
+ * 获取展开的节点，默认展开根节点的下一级
+ * @param data
+ */
+export function getDefaultExpandedKeys(data, level) {
+  if (data == null || data.length == 0) {
+    return false
+  }
+  if (level == '' || level == null || level == undefined) {
+    level == 1
+  }
+  const defaultExpandedKeys = []
+  for (let i = 0; i < data.length; i++) {
+    defaultExpandedKeys.push(data[i].id) // 默认展开
+    if (level == 2 || level == '2') {
+      const children = data[i].children
+      if (children != null && children.length > 0 && children != undefined) {
+        for (let j = 0; j < children.length; j++) {
+          defaultExpandedKeys.push(children[j].id)
+        }
+      }
+    }
+  }
+  return defaultExpandedKeys
+}
+
+/**
  * 将原生数据转换为树形数据
  * @param {*} arr 具有父子关系的扁平数据
  * @param {*} idKey 选传参数，默认为id

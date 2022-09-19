@@ -1,20 +1,20 @@
 'use strict'
 
 if (process.env.env_config == 'dev') {
-  domain = '"http://localhost:9804"'
+  evglUrl = '"http://localhost:8888/#/"'
   baseUrl = '"http://localhost:9804/console/"'
 }
 if (process.env.env_config == 'test') {
-  domain = '"https://ip.com"'
+  evglUrl = '"https://frp.creatorblue.com/evglui/#/"'
   baseUrl = '"https://ip/mgr/"'
 }
 if (process.env.env_config == 'prod') {
-  domain = '""'
+  evglUrl = '""'
   baseUrl = '"https://你的域名"'
 }
 
 module.exports = {
   NODE_ENV: '"production"',
-  domain: domain,
+  evglUrl: evglUrl,
   baseUrl: baseUrl
 }

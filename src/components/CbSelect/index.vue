@@ -1,14 +1,20 @@
 <template>
-  <el-select v-model="modelData" :multiple="multiple" collapse-tags :placeholder="placeholder" :clearable="clearable" style="width: 100%;"
-             filterable
-             @change="handleChange" @clear="handleClear"
+  <el-select
+    v-model="modelData"
+    :multiple="multiple"
+    :placeholder="placeholder"
+    :clearable="clearable"
+    collapse-tags
+    style="width: 100%;"
+    filterable
+    @change="handleChange"
+    @clear="handleClear"
   >
     <el-option
       v-for="item in options"
       :key="item.value"
       :label="item.label"
-      :value="item.value">
-    </el-option>
+      :value="item.value"/>
   </el-select>
 </template>
 
@@ -33,135 +39,134 @@
 -->
 
 <script>
-  import axios from '@/http/axios'
-  export default {
-    name: "cb-select",
-    props: {
-      id:{},
-      name:{},
-      dataForm: {},
-      filters: {},
-      prop: {},
-      value: {},
-      url: {},
-      params: {},
-      method: {
-        type: String,
-        default: "get"
-      },
-      change: {},
-      parentVue: {},
-      placeholder: {
-        type: String,
-        default: '请输入内容'
-      },
-      multiple:{
-        type: Boolean,
-        default: false
-      },
-      clearable:{
-        type: Boolean,
-        default: false
-      },
-    },//继承父组件中的name, dataForm属性，拓展功能请在此配置
-    components:{
+import axios from '@/http/axios'
+export default {
+  name: 'CbSelect', // 继承父组件中的name, dataForm属性，拓展功能请在此配置
+  components: {
+  },
+  props: {
+    id: {},
+    name: {},
+    dataForm: {},
+    filters: {},
+    prop: {},
+    value: {},
+    url: {},
+    params: {},
+    method: {
+      type: String,
+      default: 'get'
     },
-    data() {
-      return {
-        propJSON: {},
-        modelData: '',
-
-        options: [],
-        value1: [],
-
-
-      }
+    change: {},
+    parentVue: {},
+    placeholder: {
+      type: String,
+      default: '请输入内容'
     },
-    methods: {
-
-      findData: function(queryString, callback){
-        let queryData = {}
-        axios({
-          url: this.url,
-          method: this.method,
-          params: (this.method == 'post' || this.method == 'POST') ? {} : queryData,
-          data: (this.method == 'get' || this.method == 'GET') ? {} : queryData,
-        }).then(res => {
-          let resultData = res.data.list
-          resultData.forEach(data => {
-            data.label = data[this.propJSON.value]
-            data.value = data[this.propJSON.id]
-            data.key = data[this.propJSON.id]
-          });
-          this.options = resultData
-        })
-      },
-
-      handleChange:function (val) {
-        if(this.dataForm){
-          this.dataForm[this.name] = val
-          //如果传递了父vue，则重新将表单进行一次校验
-          if(this.parentVue){
-            //当页面存在多个表单时，需要遍历找到各自对应的表单进行校验重置
-            for(let ref in this.parentVue.$refs){
-              if(this.parentVue.$refs[ref].model == this.dataForm){
-                this.parentVue.$refs[ref].validateField(this.name)
-              }
-            }
-          }
-        }
-        if(this.filters){
-          this.filters[this.name] = val
-        }
-        if(this.change){
-          this.change()
-        }
-      },
-
-      handleClear:function () {
-        if(this.change){
-          this.change()
-        }
-        this.modelData = ''
-        if(this.dataForm){
-          this.dataForm[this.name] = ''
-          if(this.parentVue){
-            //当页面存在多个表单时，需要遍历找到各自对应的表单进行校验重置
-            for(let ref in this.parentVue.$refs){
-              if(this.parentVue.$refs[ref].model == this.dataForm){
-                this.parentVue.$refs[ref].validateField(this.name)
-              }
-            }
-          }
-        }
-      }
-
+    multiple: {
+      type: Boolean,
+      default: false
     },
-    watch: {
-      dataForm: function(n, o){
-        let field = this.value || this.name
-        if(n[field]){
-          this.modelData = n[field]
-        }else {
-          this.modelData = ''
-        }
-      },
-      filters: function(n, o) {
-        let field = this.value || this.name
-        if(n[field]){
-          this.modelData = n[field]
-        }else {
-          this.modelData = ''
-        }
-      }
-    },
-    mounted() {
-      this.propJSON = JSON.parse(this.prop)
-      this.propJSON.id = this.propJSON.id || "id"
-      this.propJSON.value = this.propJSON.value || "value"
-      this.findData()
+    clearable: {
+      type: Boolean,
+      default: false
     }
+  },
+  data() {
+    return {
+      propJSON: {},
+      modelData: '',
+
+      options: [],
+      value1: []
+
+    }
+  },
+  watch: {
+    dataForm: function(n, o) {
+      const field = this.value || this.name
+      if (n[field]) {
+        this.modelData = n[field]
+      } else {
+        this.modelData = ''
+      }
+    },
+    filters: function(n, o) {
+      const field = this.value || this.name
+      if (n[field]) {
+        this.modelData = n[field]
+      } else {
+        this.modelData = ''
+      }
+    }
+  },
+  mounted() {
+    this.propJSON = JSON.parse(this.prop)
+    this.propJSON.id = this.propJSON.id || 'id'
+    this.propJSON.value = this.propJSON.value || 'value'
+    this.findData()
+  },
+  methods: {
+
+    findData: function(queryString, callback) {
+      const queryData = {}
+      axios({
+        url: this.url,
+        method: this.method,
+        params: (this.method == 'post' || this.method == 'POST') ? {} : queryData,
+        data: (this.method == 'get' || this.method == 'GET') ? {} : queryData
+      }).then(res => {
+        const resultData = res.data.list
+        resultData.forEach(data => {
+          data.label = data[this.propJSON.value]
+          data.value = data[this.propJSON.id]
+          data.key = data[this.propJSON.id]
+        })
+        this.options = resultData
+      })
+    },
+
+    handleChange: function(val) {
+      if (this.dataForm) {
+        this.dataForm[this.name] = val
+        // 如果传递了父vue，则重新将表单进行一次校验
+        if (this.parentVue) {
+          // 当页面存在多个表单时，需要遍历找到各自对应的表单进行校验重置
+          for (const ref in this.parentVue.$refs) {
+            if (this.parentVue.$refs[ref].model == this.dataForm) {
+              this.parentVue.$refs[ref].validateField(this.name)
+            }
+          }
+        }
+      }
+      if (this.filters) {
+        this.filters[this.name] = val
+      }
+      if (this.change) {
+        this.change()
+      }
+    },
+
+    handleClear: function() {
+      if (this.change) {
+        this.change()
+      }
+      this.modelData = ''
+      if (this.dataForm) {
+        this.dataForm[this.name] = ''
+        if (this.parentVue) {
+          // 当页面存在多个表单时，需要遍历找到各自对应的表单进行校验重置
+          for (const ref in this.parentVue.$refs) {
+            if (this.parentVue.$refs[ref].model == this.dataForm) {
+              this.parentVue.$refs[ref].validateField(this.name)
+            }
+          }
+        }
+      }
+    }
+
   }
+}
 </script>
 
 <style scoped>
