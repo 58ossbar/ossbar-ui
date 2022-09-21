@@ -75,7 +75,7 @@
                     <cb-tree :disabled="disabled" :parent-vue="_self" :data-form="dataForm" url="/api/site/tevglsiteresourceext/querySite" placeholder="" name="parentId" prop="{&quot;id&quot;:&quot;menuId&quot;, &quot;name&quot;:&quot;name&quot;}"/>
                   </el-form-item>
                   <el-form-item label="所属机构" prop="orgId">
-                    <cb-tree :disabled="disabled" :parent-vue="_self" :data-form="dataForm" url="/api/sys/role/orgTree" placeholder="" name="orgId" prop="{&quot;id&quot;:&quot;orgId&quot;, &quot;name&quot;:&quot;orgName&quot;}"/>
+                    <cb-tree :disabled="disabled" :parent-vue="_self" :data-form="dataForm" url="/api/sys/org/getOrgTree" placeholder="" name="orgId" prop="{&quot;id&quot;:&quot;orgId&quot;, &quot;name&quot;:&quot;orgName&quot;}"/>
                   </el-form-item>
                 </div>
               </el-form>
