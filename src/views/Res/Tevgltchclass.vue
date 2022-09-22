@@ -13,7 +13,7 @@
               </el-col>
               <el-col :span="6">
                 <el-form-item class="dictInputQueryWidth ">
-                  <cb-tree :parent-vue="_self" :change="findPage" :filters="filters" url="/api/sys/role/orgTree" placeholder="请选择所属院校" name="orgId" prop="{&quot;id&quot;:&quot;orgId&quot;, &quot;name&quot;:&quot;orgName&quot;}"/>
+                  <cb-tree :parent-vue="_self" :change="findPage" :filters="filters" url="/api/sys/org/getOrgTree" placeholder="请选择所属院校" name="orgId" prop="{&quot;id&quot;:&quot;orgId&quot;, &quot;name&quot;:&quot;orgName&quot;}"/>
                 </el-form-item>
               </el-col>
               <el-col :span="2">

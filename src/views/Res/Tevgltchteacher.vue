@@ -17,7 +17,7 @@
                     :filters="filters"
                     :parent-vue="_self"
                     :change="findPage"
-                    url="/api/sys/role/orgTree"
+                    url="/api/sys/org/getOrgTree"
                     placeholder="请选择所属院校"
                     name="orgId"
                     prop="{&quot;id&quot;:&quot;orgId&quot;, &quot;name&quot;:&quot;orgName&quot;}"
@@ -132,10 +132,10 @@
                 <!--<cb-input :parentVue="this._self" placeholder="请输入教师名称" name="teacherName" :dataForm="dataForm"></cb-input>-->
               </el-form-item>
               <el-form-item label="所属院校" prop="orgId">
-                <cb-tree :parent-vue="_self" :data-form="dataForm" url="/api/sys/role/orgTree" placeholder="请选择所属院校" name="orgId" prop="{&quot;id&quot;:&quot;orgId&quot;, &quot;name&quot;:&quot;orgName&quot;}"/>
+                <cb-tree :parent-vue="_self" :data-form="dataForm" url="/api/sys/org/getOrgTree" placeholder="请选择所属院校" name="orgId" prop="{&quot;id&quot;:&quot;orgId&quot;, &quot;name&quot;:&quot;orgName&quot;}"/>
               </el-form-item>
               <el-form-item label="二级部门" prop="orgIdDepartment">
-                <cb-tree :parent-vue="_self" :data-form="dataForm" url="/api/sys/role/orgTree" placeholder="请选择二级部门" name="orgIdDepartment" prop="{&quot;id&quot;:&quot;orgId&quot;, &quot;name&quot;:&quot;orgName&quot;}"/>
+                <cb-tree :parent-vue="_self" :data-form="dataForm" url="/api/sys/org/getOrgTree" placeholder="请选择二级部门" name="orgIdDepartment" prop="{&quot;id&quot;:&quot;orgId&quot;, &quot;name&quot;:&quot;orgName&quot;}"/>
               </el-form-item>
               <el-form-item label="职业路径" prop="majorId">
                 <cb-tree :parent-vue="_self" :data-form="dataForm" url="/api/book/tevglbookmajor/queryForTree" is-mult="true" placeholder="请选择所属职业路径" name="majorId" prop="{&quot;id&quot;: &quot;majorId&quot;, &quot;name&quot;: &quot;majorName&quot;}"/>
