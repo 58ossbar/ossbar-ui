@@ -156,10 +156,10 @@
                 />
               </el-form-item>
               <el-form-item label="工号/学号" prop="jobNumber">
-                <el-input v-model="dataForm.jobNumber" auto-complete="off"/>
+                <el-input v-model="dataForm.jobNumber" auto-complete="off" maxlength="50"/>
               </el-form-item>
               <el-form-item label="教师证件号" prop="teacherErtificateNumber">
-                <el-input v-model="dataForm.teacherErtificateNumber" auto-complete="off"/>
+                <el-input v-model="dataForm.teacherErtificateNumber" auto-complete="off" maxlength="50"/>
               </el-form-item>
             </div>
 

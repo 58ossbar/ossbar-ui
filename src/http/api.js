@@ -27,6 +27,8 @@ import * as attach from './modules/sys/attach'
 import * as parameter from './modules/sys/parameter'
 // 操作日志
 import * as log from './modules/sys/log'
+
+// TODO 在下面累加你自己的业务js即可
 // 友情社区
 import * as tevglforumfriend from './modules/site/TevglForumFriend'
 // 友情分类
@@ -59,10 +61,25 @@ import * as tevgltchteacher from './modules/res/TevglTchTeacher'
 import * as tmedumediaavd from './modules/medu/TmeduMediaAvd'
 // 学员
 import * as tevgltraineeinfo from './modules/res/TevglTraineeInfo'
-// TODO 在下面累加你自己的业务js即可
 
 // 默认全部导出
 export default {
-  login, settings, dept, user, role, post, dict, loginLog, menu, job, attach, parameter, log, tevglforumfriend, tevglforumfriendtype, tevglsiteavd, tevglsitenews, tevglsiteresourceext, tevglsiteupdatelog, tevglSiteVideo, tevglbookmajor, tevglbooksubject, tevglbooksubperiod, tevgltchclass, tevgltchclassroom, tevgltchclasstrainee, tevgltchteacher, tmedumediaavd, tevgltraineeinfo
+  login, settings, dept, user, role, post, dict, loginLog, menu, job, attach, parameter, log,
   // TODO 在这累加上面你自己定义的名称即可
+  tevglforumfriend,
+  tevglforumfriendtype,
+  tevglsiteavd,
+  tevglsitenews,
+  tevglsiteresourceext,
+  tevglsiteupdatelog,
+  tevglSiteVideo,
+  tevglbookmajor,
+  tevglbooksubject,
+  tevglbooksubperiod,
+  tevgltchclass,
+  tevgltchclassroom,
+  tevgltchclasstrainee,
+  tevgltchteacher,
+  tmedumediaavd,
+  tevgltraineeinfo
 }

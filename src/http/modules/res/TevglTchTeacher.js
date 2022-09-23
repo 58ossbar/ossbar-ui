@@ -12,14 +12,22 @@ export const findPage = (params) => {
 // 保存
 export const save = (data) => {
   return axios({
-    url: '/api/tch/tevgltchteacher/saveorupdate?attachId=' + data.teacherPicAttachId,
+    url: '/api/tch/tevgltchteacher/save',
+    method: 'post',
+    data
+  })
+}
+
+export const update = (data) => {
+  return axios({
+    url: '/api/tch/tevgltchteacher/update',
     method: 'post',
     data
   })
 }
 
 // 删除
-export const doDelete = (data) => {
+export const batchDelete = (data) => {
   return axios({
     url: '/api/tch/tevgltchteacher/deletes',
     method: 'post',
