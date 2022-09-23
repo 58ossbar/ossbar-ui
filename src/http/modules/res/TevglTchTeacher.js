@@ -59,3 +59,11 @@ export const updateStatus = (data) => {
     data
   })
 }
+
+export const queryTeacherList = (params) => {
+  return axios({
+    url: '/api/tch/tevgltchteacher/queryTeacherList',
+    method: 'get',
+    params
+  })
+}
