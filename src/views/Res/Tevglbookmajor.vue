@@ -179,7 +179,7 @@
         style="height: 670px;margin-top: 10px">
         <div style="width: 49%; float: left;">
           <el-form-item label="所属院校" prop="orgId">
-            <cb-tree :parent-vue="_self" :data-form="majorDataForm" url="/api/sys/role/orgTree" placeholder="请选择所属院校" name="orgId" prop="{&quot;id&quot;:&quot;orgId&quot;, &quot;name&quot;:&quot;orgName&quot;}"/>
+            <cb-tree :parent-vue="_self" :data-form="majorDataForm" url="/api/sys/org/getOrgTree" placeholder="请选择所属院校" name="orgId" prop="{&quot;id&quot;:&quot;orgId&quot;, &quot;name&quot;:&quot;orgName&quot;}"/>
           </el-form-item>
           <el-form-item label="专业名称" prop="majorName">
             <el-input v-model="majorDataForm.majorName" auto-complete="off" maxlength="50"/>

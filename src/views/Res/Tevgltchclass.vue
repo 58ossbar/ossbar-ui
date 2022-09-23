@@ -116,7 +116,7 @@
             </template>
             <div style="width: 49%; float:left;">
               <el-form-item label="所属院校" prop="orgId">
-                <cb-tree :parent-vue="_self" :data-form="dataForm" url="/api/sys/role/orgTree" placeholder="请选择所属院校" name="orgId" prop="{&quot;id&quot;:&quot;orgId&quot;, &quot;name&quot;:&quot;orgName&quot;}"/>
+                <cb-tree :parent-vue="_self" :data-form="dataForm" url="/api/sys/org/getOrgTree" placeholder="请选择所属院校" name="orgId" prop="{&quot;id&quot;:&quot;orgId&quot;, &quot;name&quot;:&quot;orgName&quot;}"/>
               </el-form-item>
               <el-form-item label="班级名称" prop="className">
                 <el-input v-model="dataForm.className" auto-complete="off" placeholder="请输入班级名称" maxlength="100"/>
@@ -298,7 +298,7 @@ export default {
       const params = {
         hasTraineeId: 'Y'
       }
-      this.$api.tevgltchclassroom.queryTeacherList(params).then(res => {
+      this.$api.tevgltchteacher.queryTeacherList(params).then(res => {
         res.data.forEach(item => {
           item.teacherPic = baseUrl + item.teacherPic
         })
