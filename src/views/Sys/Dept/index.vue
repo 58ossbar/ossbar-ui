@@ -246,7 +246,7 @@
               <el-button size="mini" type="primary" icon="el-icon-circle-close" @click="handleCancel" >
                 {{ $t('action.cancel') }}
               </el-button>
-              <el-button size="mini" type="primary" icon="el-icon-circle-plus-outline" @click="submitForm(true)" >
+              <el-button v-if="!dataForm.orgId" size="mini" type="primary" icon="el-icon-circle-plus-outline" @click="submitForm(true)" >
                 {{ $t('action.saveContinue') }}
               </el-button>
               <el-button size="mini" type="primary" icon="el-icon-circle-check" @click="submitForm" >
@@ -671,7 +671,7 @@ export default {
         this.loading = false
         if (res.code === 0) {
           this.$message.success(res.msg)
-          this.resetFormDatas()
+          // this.resetFormDatas()
           this.dialogVisible = false
           this.$emit('ok', submitData)
         } else {
