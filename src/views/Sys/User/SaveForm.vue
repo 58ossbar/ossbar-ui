@@ -76,12 +76,12 @@
                 />
               </el-form-item>
               <el-form-item label="性别" prop="sex">
-                <cb-dict
+                <cb-param
                   :parent-vue="_self"
                   :data-form="dataForm"
                   placeholder="请选择"
                   name="sex"
-                  dict="sex"
+                  param="sex"
                   type="select"
                 />
               </el-form-item>
@@ -251,11 +251,11 @@ export default {
         // 用户ID
         userId: null,
         // 登录账号，用户名
-        username: 'test18508480001',
+        username: '',
         // 用户真实姓名
-        userRealname: 'test18508480001',
+        userRealname: '',
         // 手机号码
-        mobile: '18508480001',
+        mobile: '',
         // 所属机构
         orgId: '',
         // 所属副机构

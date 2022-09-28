@@ -224,7 +224,7 @@ export default {
     },
     update() {
       const submitData = Object.assign({}, this.dataForm)
-      this.$api.dict.update(submitData).then((res) => {
+      this.$api.parameter.update(submitData).then((res) => {
         this.loading = false
         if (res.code === 0) {
           this.$message.success(res.msg)

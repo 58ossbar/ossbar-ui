@@ -63,7 +63,6 @@ import nxSubsystemset from '@/components/nx-subsystemset/index'
 import NoticePanel from '@/views/Core/NoticePanel'
 import MessagePanel from '@/views/Core/MessagePanel'
 import PersonalPanel from '@/views/Core/PersonalPanel'
-import { baseUrl } from '../../utils/global'
 import { handleImagePath } from '@/utils/util'
 export default {
   components: {
@@ -106,7 +105,7 @@ export default {
     if (user) {
       this.user.name = user
       this.user.userRealname = sessionStorage.getItem('userRealname')
-      this.user.avatar = handleImagePath(userimg)
+      this.user.avatar = handleImagePath(userimg, true)
     }
     $('.headbar .el-menu-item.is-active > div > i').css('color', '#ffd04b')
   },
