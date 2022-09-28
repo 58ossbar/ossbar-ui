@@ -148,7 +148,6 @@
                   </el-col>
                   <el-col :span="12">
                     <el-form-item v-show="dataForm.parentId!=='-1' || !dataForm.formState" label="父级机构" prop="parentId">
-                      {{ dataForm.parentId }}
                       <cb-tree
                         ref="orgTree"
                         :parent-vue="_self"
