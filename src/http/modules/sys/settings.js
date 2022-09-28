@@ -9,7 +9,7 @@ import axios from '@/http/axios'
  * @param {*} data
  * @returns
  */
-export const save = (data) => {
+export const update = (data) => {
   if (data) {
     return axios({
       url: '/api/sys/settings/update',
