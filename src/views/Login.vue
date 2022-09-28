@@ -5,7 +5,7 @@
         <img src="../assets/my/logo.png" class="loginLogoStyle" alt="logo" style="display: none">
       </div>
       <div class="appNames" style="height:75px;line-height: 75px;color: black;font-size: 20px;margin-left: 1%; display: none">
-        {{ appNames }}   <!--创蓝教育实训云平台-->
+        {{ appNames }}
       </div>
     </div>
     <div class="center">
@@ -135,8 +135,8 @@ export default {
   data() {
     return {
       phoneCom: '0731-89913439',
-      info: 'Copyright © 2019-2025 湖南创蓝信息科技有限公司版权所有',
-      appNames: '创蓝业务基础平台',
+      info: 'Copyright © 开源吧 2021-2031 湘ICP备12010267号',
+      appNames: '开源吧业务基础平台',
       imageUrlBack: '',
       logo: '',
       loading: false,
