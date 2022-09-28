@@ -25,18 +25,13 @@ export function hasPermissionList(permList) {
   if (!permissions || !permissions.length) {
     return false
   }
-  let num = 0
   for (let i = 0, len = permissions.length; i < len; i++) {
     for (let j = 0, len2 = permList.length; j < len2; j++) {
       if (permissions[i] === permList[j]) {
-        // hasPermission = true
-        num++
+        hasPermission = true
         break
       }
     }
-  }
-  if (num === permList.length) {
-    hasPermission = true
   }
   return hasPermission
 }
