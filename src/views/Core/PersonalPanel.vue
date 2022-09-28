@@ -489,7 +489,7 @@ export default {
         if (valid) {
           this.$confirm('确认提交吗？', '提示', {}).then(() => {
             const params = Object.assign({}, this.dataForm)
-            params.attachId = this.attachId
+            params.userimgAttachId = this.attachId
             params.username = sessionStorage.getItem('user')
             this.$api.user.update(params).then((res) => {
               if (res.code === 0) {
