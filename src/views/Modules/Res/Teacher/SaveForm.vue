@@ -236,7 +236,7 @@ export default {
       } else {
         this.orgTreeData = []
       }
-      this.$api.role.view(row.roleId).then(res => {
+      this.$api.tevgltchteacher.view(row.teacherId).then(res => {
         if (res.code === 0) {
           // 赋值
           this.dataForm = Object.assign({}, res.data)
