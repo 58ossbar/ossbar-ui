@@ -96,13 +96,16 @@
 
 流水号管理：根据不同的规则生成连续的编号：例如，订单编号、教师编号、学生学号等。
 
-# 功能截图
-
-![](https://www.ossbar.com/codeshop/uploads/3121bde9-d404-4112-a385-2a7d84f1b525.png "登录界面")
-
-![](https://www.ossbar.com/codeshop/uploads/4a20f7de-5cb9-452f-b762-6357f0ea491d.png "内容编排")
-
-![](https://www.ossbar.com/codeshop/uploads/fe19d407-7b17-40bb-8d68-6735d17c04b9.png "合作企业")
+# 体验地址
+## 门户地址
+https://frp.creatorblue.com/bds/
+### 老师账号：18229923839 老师密码：cb123456
+### 学生账号：13142149731  学生密码：123456
+## 管理端访问地址：https://frp.creatorblue.com/bds-mgr/#/login
+账号：admin
+密码：888888
+### 小程序
+微信小程序中搜索布道师高校版
 
 # 安装和部署
 
