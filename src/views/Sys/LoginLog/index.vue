@@ -86,7 +86,7 @@
           :data="pageResult"
           :columns="columns"
           :btn-columns="btnColumns"
-          perms-batch-delete="sys:role:remove"
+          perms-batch-delete="sys:tsysloginlog:remove"
           row-key="loginlogid"
           @findPage="findPage"
           @selectionChange="handleSelectionChange"
