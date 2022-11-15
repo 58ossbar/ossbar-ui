@@ -415,6 +415,9 @@ export default {
     },
     getSubjectLogo: function() {
       this.$api.tevglbooksubject.getSubjectLogo().then((res) => {
+        if (!res.data) {
+          return false
+        }
         this.subjectLogos = res.data
         this.subjectLogos.map(logo => {
           // logo.shortUrl = logo.dictUrl.substring(logo.dictUrl.lastIndexOf("/") + 1)

@@ -534,6 +534,7 @@ export default {
         this.$api.dept.batchDelete(ids).then(res => {
           if (res.code !== 0) {
             this.$message.error(res.msg)
+            return false
           } else {
             this.$message({ message: '操作成功', type: 'success' })
             // this.findTreeData()
@@ -541,13 +542,14 @@ export default {
               this.dataForm = Object.assign({}, this.$refs.deptTree.getNode(data.parentId).data)
               this.$refs.deptTree.setCurrentKey(data.parentId)
             } else {
-              this.dataForm = Object.assign({}, this.$refs.deptTree.getNode(this.tableTreeDdata[0].orgId).data)
-              this.$refs.deptTree.setCurrentKey(this.tableTreeDdata[0].orgId)
+              this.dataForm = Object.assign({}, this.$refs.deptTree.getNode(this.listData[0].orgId).data)
+              this.$refs.deptTree.setCurrentKey(this.listData[0].orgId)
             }
             this.$refs.deptTree.remove(this.$refs.deptTree.getNode(data.orgId))
           }
         }).catch((e) => {
-          this.$message({ type: 'error', message: '删除失败' })
+          console.log(e)
+          // this.$message({ type: 'error', message: '删除失败' })
         })
       }).catch(() => {
         this.$message({ type: 'info', message: '删除未成功' })
@@ -691,7 +693,7 @@ export default {
       } else {
         const datas = this.$refs.deptTree.getCurrentNode()
         if (datas === null) {
-          this.dataForm = Object.assign({}, this.tableTreeDdata[0])
+          this.dataForm = Object.assign({}, this.listData[0])
         } else {
           this.dataForm = Object.assign({}, datas)
         }
