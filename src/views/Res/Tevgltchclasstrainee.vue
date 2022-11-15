@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <el-container class="page-container scrollAllY">
-      <el-aside width="350px" class="box_shadows bgcolor LeftPadding marginBottom">
+      <el-aside width="250px" class="box_shadows bgcolor LeftPadding marginBottom">
         <div class="displayFlex marginBottom">
           <!--过滤输入框-->
           <el-input

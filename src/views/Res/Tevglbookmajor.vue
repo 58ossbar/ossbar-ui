@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <el-container class="page-container scrollAllY">
-      <el-aside width="200px" class="box_shadows bgcolor LeftPadding marginBottom">
+      <el-aside width="250px" class="box_shadows bgcolor LeftPadding marginBottom">
         <cb-tree-panel :parent-vue="_self" :btn-columns="treeBtnColumns" :node-click="changeMajor" url="/api/book/tevglbookmajor/queryForTree" root-node="职业路径" name="majorTree" prop="{&quot;id&quot;: &quot;majorId&quot;, &quot;name&quot;: &quot;majorName&quot;}"/>
       </el-aside>
       <el-container>

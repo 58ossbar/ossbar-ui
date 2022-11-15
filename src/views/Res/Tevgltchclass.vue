@@ -527,7 +527,10 @@ export default {
     },
     getClassPic: function() {
       this.$api.tevgltchclass.getClassPic().then((res) => {
-        if (res.code == 0) {
+        if (res.code === 0) {
+          if (!res.data) {
+            return false
+          }
           this.classPicList = res.data
           this.classPicList.map(logo => {
             // logo.shortUrl = logo.dictUrl.substring(logo.dictUrl.lastIndexOf("/") + 1)
